@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme {
+  --color-grass-light: #7DBE3C;
+  --color-grass-dark: #6BA52F;
+  --color-ui-bg: #3B2D21;
+  --color-ui-border: #5D4636;
+  --color-money-green: #2ECC71;
+  --color-accent-yellow: #F1C40F;
+  --color-farm-soil: #553B2F;
+  --color-danger-red: #E74C3C;
+}
+
+body {
+  background-color: #222;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+@keyframes wobble {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}

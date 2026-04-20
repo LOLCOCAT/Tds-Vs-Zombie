@@ -1,0 +1,6 @@
+{
+  "name": "Tds vs Zombies",
+  "description": "A grid-based Tower Defense game inspired by PvZ, featuring a deep upgrade system and resource management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": []
+}
