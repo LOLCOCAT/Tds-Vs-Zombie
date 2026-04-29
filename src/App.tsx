@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Coins, TrendingUp, Shield, Trash2, X } from 'lucide-react';
+import { Coins, TrendingUp, Shield, Trash2, X, Zap } from 'lucide-react';
 
 // --- Constants & Types ---
 
@@ -14,21 +14,84 @@ const COLS = 9;
 const CELL_SIZE = 100;
 const TICK_RATE = 1000 / 60; // 60 FPS logic
 
-type EntityType = 'farm' | 'zombie';
-type Difficulty = 'Very Easy' | 'Easy' | 'Normal' | 'Hard' | 'Insane';
-type Language = 'en' | 'it' | 'de' | 'meme' | 'gamer';
+type EntityType = 'scout' | 'sniper' | 'farm' | 'paintballer' | 'demoman' | 'soldier' | 'shotgunner' | 'freezer' | 'assassin' | 'militant' | 'zombie';
+type UnitType = 'scout' | 'sniper' | 'farm' | 'paintballer' | 'demoman' | 'soldier' | 'shotgunner' | 'freezer' | 'assassin' | 'militant';
+type Difficulty = 'Very Easy' | 'Easy' | 'Normal' | 'Hard' | 'Insane' | 'Infinite';
+type Language = 'en' | 'it' | 'de' | 'meme' | 'gamer' | 'pirate' | 'lolcat' | 'briish';
+
+function getLevels(type: UnitType) {
+  switch (type) {
+    case 'farm': return FARM_LEVELS;
+    case 'scout': return SCOUT_LEVELS;
+    case 'sniper': return SNIPER_LEVELS;
+    case 'paintballer': return PAINTBALLER_LEVELS;
+    case 'demoman': return DEMOMAN_LEVELS;
+    case 'soldier': return SOLDIER_LEVELS;
+    case 'shotgunner': return SHOTGUNNER_LEVELS;
+    case 'freezer': return FREEZER_LEVELS;
+    case 'assassin': return ASSASSIN_LEVELS;
+    case 'militant': return MILITANT_LEVELS;
+    default: return SCOUT_LEVELS;
+  }
+}
+
+const ALL_UNIT_TYPES: { type: UnitType; nameKey: string; icon: string }[] = [
+  { type: 'scout', nameKey: 'scoutName', icon: '/Scout/Appearance/LO_Scout_0.webp' },
+  { type: 'sniper', nameKey: 'sniperName', icon: '/Sniper/Appearance/DHDefaultSniper0.webp' },
+  { type: 'demoman', nameKey: 'demomanName', icon: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman0.webp' },
+  { type: 'farm', nameKey: 'farmName', icon: '/Farm/Appearance/Farm0.webp' },
+  { type: 'paintballer', nameKey: 'paintballerName', icon: '/PaintBALLER/Apareance/DHDefaultPaintballer0.webp' },
+  { type: 'soldier', nameKey: 'soldierName', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Appearance/KR_Soldier_0.webp' },
+  { type: 'shotgunner', nameKey: 'shotgunnerName', icon: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl0.webp' },
+  { type: 'freezer', nameKey: 'freezerName', icon: '/Freezer/Apareance/KRFreezer0.webp' },
+  { type: 'assassin', nameKey: 'assassinName', icon: '/Assassin/Aspect/AssassinLevel0.webp' },
+  { type: 'militant', nameKey: 'militantName', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/Militant/MilitantLevel0.webp' },
+];
+
+const DEMOMAN_LEVELS = [
+  { level: 0, cost: 550, upgradeCost: 225, hp: 100, damage: 6, interval: 2425, sellPrice: 183, splashRange: 0.83, hasHiddenDetection: false, hasLeadDetection: true, name: 'Demoman', appearance: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman0.webp', icon: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman0.webp', description: 'Splash: 0.83 | Interval: 2.425s | Lead Detection' },
+  { level: 1, cost: 0, upgradeCost: 800, hp: 100, damage: 6, interval: 1775, sellPrice: 258, splashRange: 0.83, hasHiddenDetection: false, hasLeadDetection: true, name: 'Faster Throwing', appearance: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman1.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Demoman_Upgrade_1_New.webp', description: 'Interval: 1.775s (-0.65s)' },
+  { level: 2, cost: 0, upgradeCost: 2325, hp: 100, damage: 12, interval: 1775, sellPrice: 525, splashRange: 0.875, hasHiddenDetection: false, hasLeadDetection: true, name: 'Ullapool Caber', appearance: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman2.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Demoman_Upgrade_2.webp', description: 'Damage: 12 (+6) | Splash: 0.875' },
+  { level: 3, cost: 0, upgradeCost: 5750, hp: 100, damage: 25, interval: 1525, sellPrice: 1300, splashRange: 0.875, hasHiddenDetection: true, hasLeadDetection: true, name: 'Loch-n-Load', appearance: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman3.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Demoman_Upgrade_3.webp', description: 'Damage: 25 (+13) | Interval: 1.525s | +Hidden Detection' },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 50, interval: 1325, sellPrice: 3216, splashRange: 1.0, hasHiddenDetection: true, hasLeadDetection: true, name: "Expert's Ordnance", appearance: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman4.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/NewDemomanLevel4.webp', description: 'Damage: 50 (+25) | Interval: 1.325s | Splash: 1.0' },
+];
+
+const SOLDIER_LEVELS = [
+  { level: 0, cost: 400, upgradeCost: 50, hp: 100, damage: 1, interval: 175, burstCount: 3, cooldown: 550, sellPrice: 133, name: 'Soldier', appearance: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Appearance/KR_Soldier_0.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Appearance/KR_Soldier_0.webp', description: 'Burst: 3 shots | 1 Damage', hasHiddenDetection: false, hasFlyingDetection: false },
+  { level: 1, cost: 0, upgradeCost: 650, hp: 100, damage: 1, interval: 150, burstCount: 3, cooldown: 550, sellPrice: 150, name: 'Barracks Training', appearance: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Appearance/KR_Soldier_1.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Upgrade icon/Soldier_Upgrade_1_New.webp', description: 'Firerate: 0.175s > 0.15s', hasHiddenDetection: false, hasFlyingDetection: false },
+  { level: 2, cost: 0, upgradeCost: 1350, hp: 100, damage: 2, interval: 150, burstCount: 4, cooldown: 550, sellPrice: 366, name: 'Better Aiming', appearance: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Appearance/KR_Soldier_2.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Upgrade icon/Soldier_Upgrade_2_New.webp', description: '+1 Damage | Burst: 4 | +Hidden', hasHiddenDetection: true, hasFlyingDetection: false },
+  { level: 3, cost: 0, upgradeCost: 5000, hp: 100, damage: 3, interval: 150, burstCount: 8, cooldown: 400, sellPrice: 783, name: 'Equipment Upgrades', appearance: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Appearance/KR_Soldier_3.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Upgrade icon/Soldier_Upgrade_4_New.webp', description: '+1 Damage | Burst: 8 | Cooldown: 0.4s', hasHiddenDetection: true, hasFlyingDetection: false },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 8, interval: 150, burstCount: 12, cooldown: 400, sellPrice: 2450, name: 'Deadliest Soldier', appearance: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Appearance/KR_Soldier_4.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Upgrade icon/Soldier_Upgrade_5_New.webp', description: '+5 Damage | Burst: 12 | +Flying Detection', hasHiddenDetection: true, hasFlyingDetection: true },
+];
+
+const MILITANT_LEVELS = [
+  { level: 0, cost: 600, upgradeCost: 300, hp: 100, damage: 1, interval: 225, sellPrice: 200, name: 'Militant', appearance: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/Militant/MilitantLevel0.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/Militant/MilitantLevel0.webp', description: 'Single Damage: 1 | Interval: 0.225s', hasHiddenDetection: false, hasFlyingDetection: false },
+  { level: 1, cost: 0, upgradeCost: 850, hp: 100, damage: 1, interval: 175, sellPrice: 300, name: 'Radio Comms', appearance: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/Militant/MilitantLevel1.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/Militant/MilitantLevel1.webp', description: 'Interval: 0.175s | +Hidden/Flying', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 2, cost: 0, upgradeCost: 2750, hp: 100, damage: 2, interval: 175, sellPrice: 583, name: 'Field Ops', appearance: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/Militant/MilitantLevel2.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/Militant/MilitantLevel2.webp', description: 'Damage: 2 (+1)', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 3, cost: 0, upgradeCost: 8000, hp: 100, damage: 5, interval: 175, sellPrice: 1500, name: 'Guerrilla Tactics', appearance: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/Militant/MilitantLevel3.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/Militant/MilitantLevel3.webp', description: 'Damage: 5 (+3)', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 12, interval: 175, sellPrice: 4166, name: 'Stealth Mercenary', appearance: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/Militant/MilitantLevel4.webp', icon: '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/Militant/MilitantLevel4.webp', description: 'Damage: 12 (+7)', hasHiddenDetection: true, hasFlyingDetection: true },
+];
 
 const SNIPER_LEVELS = [
   { level: 0, cost: 450, upgradeCost: 200, hp: 100, damage: 10, interval: 5008, sellPrice: 150, hasHiddenDetection: false, hasLeadDetection: false, hasFlyingDetection: true, name: 'Sniper', appearance: '/Sniper/Appearance/DHDefaultSniper0.webp', icon: '/Sniper/Appearance/DHDefaultSniper0.webp', description: 'Attack: 10 | Interval: 5.0s | High range' },
-  { level: 1, cost: 0, upgradeCost: 750, hp: 100, damage: 12, interval: 4008, sellPrice: 216, hasHiddenDetection: false, hasLeadDetection: false, hasFlyingDetection: true, name: 'Sniper L1', appearance: '/Sniper/Appearance/DHDefaultSniper1.webp', icon: '/Sniper/Upgrade icon/Common1Image.webp', description: 'Attack: 12 (+2) | Interval: 4.0s' },
-  { level: 2, cost: 0, upgradeCost: 2250, hp: 100, damage: 25, interval: 4008, sellPrice: 466, hasHiddenDetection: true, hasLeadDetection: false, hasFlyingDetection: true, name: 'Sniper L2', appearance: '/Sniper/Appearance/DHDefaultSniper2.webp', icon: '/Sniper/Upgrade icon/Sniper2.webp', description: 'Attack: 25 (+13) | +Hidden Detection' },
-  { level: 3, cost: 0, upgradeCost: 4500, hp: 100, damage: 60, interval: 4008, sellPrice: 1216, hasHiddenDetection: true, hasLeadDetection: true, hasFlyingDetection: true, name: 'Sniper L3', appearance: '/Sniper/Appearance/DHDefaultSniper3.webp', icon: '/Sniper/Upgrade icon/Sniper3.webp', description: 'Attack: 60 (+35) | +Lead Detection' },
-  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 100, interval: 3508, sellPrice: 2716, hasHiddenDetection: true, hasLeadDetection: true, hasFlyingDetection: true, name: 'Sniper L4', appearance: '/Sniper/Appearance/DHDefaultSniper4.webp', icon: '/Sniper/Upgrade icon/Sniper4.webp', description: 'Attack: 100 (+40) | Interval: 3.5s' },
+  { level: 1, cost: 0, upgradeCost: 750, hp: 100, damage: 12, interval: 4008, sellPrice: 216, hasHiddenDetection: false, hasLeadDetection: false, hasFlyingDetection: true, name: 'Faster Reloading', appearance: '/Sniper/Appearance/DHDefaultSniper1.webp', icon: '/Sniper/Upgrade icon/Common1Image.webp', description: 'Attack: 12 (+2) | Interval: 4.0s' },
+  { level: 2, cost: 0, upgradeCost: 2250, hp: 100, damage: 25, interval: 4008, sellPrice: 466, hasHiddenDetection: true, hasLeadDetection: false, hasFlyingDetection: true, name: 'Geared Up', appearance: '/Sniper/Appearance/DHDefaultSniper2.webp', icon: '/Sniper/Upgrade icon/Sniper2.webp', description: 'Attack: 25 (+13) | +Hidden Detection' },
+  { level: 3, cost: 0, upgradeCost: 4500, hp: 100, damage: 60, interval: 4008, sellPrice: 1216, hasHiddenDetection: true, hasLeadDetection: true, hasFlyingDetection: true, name: 'Frontlines Sniping', appearance: '/Sniper/Appearance/DHDefaultSniper3.webp', icon: '/Sniper/Upgrade icon/Sniper3.webp', description: 'Attack: 60 (+35) | +Lead Detection' },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 100, interval: 3508, sellPrice: 2716, hasHiddenDetection: true, hasLeadDetection: true, hasFlyingDetection: true, name: 'Spec Ops', appearance: '/Sniper/Appearance/DHDefaultSniper4.webp', icon: '/Sniper/Upgrade icon/Sniper4.webp', description: 'Attack: 100 (+40) | Interval: 3.5s' },
+];
+
+const PAINTBALLER_LEVELS = [
+  { level: 0, cost: 100, upgradeCost: 25, hp: 100, damage: 1, interval: 1725, sellPrice: 33, splashRange: 0.5, hasHiddenDetection: false, name: 'Paintballer', appearance: '/PaintBALLER/Apareance/DHDefaultPaintballer0.webp', icon: '/PaintBALLER/Apareance/DHDefaultPaintballer0.webp', description: 'Splash: 0.5 | Interval: 1.725s' },
+  { level: 1, cost: 0, upgradeCost: 150, hp: 100, damage: 1, interval: 1725, sellPrice: 41, splashRange: 0.58, hasHiddenDetection: true, name: 'Paintball Gear', appearance: '/PaintBALLER/Apareance/DHDefaultPaintballer1.webp', icon: '/PaintBALLER/Upgrade/Common1Image.webp', description: 'Splash: 0.58 | +Hidden Detection' },
+  { level: 2, cost: 0, upgradeCost: 600, hp: 100, damage: 2, interval: 1425, sellPrice: 91, splashRange: 0.67, hasHiddenDetection: true, name: 'Shoulder Pads', appearance: '/PaintBALLER/Apareance/DHDefaultPaintballer2.webp', icon: '/PaintBALLER/Upgrade/Paintballer2.webp', description: 'Damage: 2 | Interval: 1.425s | Splash: 0.67' },
+  { level: 3, cost: 0, upgradeCost: 1500, hp: 100, damage: 3, interval: 725, sellPrice: 291, splashRange: 0.67, hasHiddenDetection: true, name: 'Double Barrel Gun', appearance: '/PaintBALLER/Apareance/DHDefaultPaintballer3.webp', icon: '/PaintBALLER/Upgrade/Paintballer3.webp', description: 'Damage: 3 | Interval: 0.725s' },
+  { level: 4, cost: 0, upgradeCost: 3600, hp: 100, damage: 8, interval: 725, sellPrice: 791, splashRange: 0.75, hasHiddenDetection: true, name: 'Competitive Gear', appearance: '/PaintBALLER/Apareance/DHDefaultPaintballer4.webp', icon: '/PaintBALLER/Upgrade/Paintballer4.webp', description: 'Damage: 8 (+5) | Splash: 0.75' },
+  { level: 5, cost: 0, upgradeCost: 0, hp: 100, damage: 20, interval: 725, sellPrice: 1991, splashRange: 0.83, hasHiddenDetection: true, name: 'Paintball Champion', appearance: '/PaintBALLER/Apareance/DHDefaultPaintballer5.webp', icon: '/PaintBALLER/Upgrade/Paintballer5.webp', description: 'Damage: 20 (+12) | Splash: 0.83' },
 ];
 
 const TRANSLATIONS: Record<Language, any> = {
   en: {
-    title: 'FARM DEFENSE',
+    title: 'TDS Vs ZombieSSS',
     subtitle: 'Select Difficulty to Start Simulation',
     veryeasy: 'Very Easy',
     easy: 'Easy',
@@ -39,6 +102,8 @@ const TRANSLATIONS: Record<Language, any> = {
     ultimate: 'Ultimate Challenge',
     standard: 'Standard Game',
     starting: 'Starting',
+    attrBoss: 'Boss',
+    attrBossDesc: 'Only appears once per game! Immune to most status effects and can move while stunned.',
     openAlmanac: '📖 Open Almanac',
     version: 'Simulation v2.5.0',
     money: 'Money',
@@ -56,12 +121,22 @@ const TRANSLATIONS: Record<Language, any> = {
     closeBook: "Close Book",
     unitsTab: "Units",
     zombiesTab: "Zombies",
+    attributesTab: "Attributes",
     scoutName: "Scout",
     scoutDesc: "Quick unit for early game defense.",
+    soldierName: "Soldier",
+    soldierDesc: "Fires in bursts. Versatile with good upgrades.",
     farmName: "Farm",
     farmDesc: "Produces gold to buy more units.",
     sniperName: "Sniper",
     sniperDesc: "Long-range unit that can hit any lane.",
+    paintballerName: "Paintballer",
+    paintballerDesc: "Area damage unit using paintballs.",
+    demomanName: "Demoman",
+    demomanDesc: "Explosive expert dealing massive area damage.",
+    selectLoadout: "Choose Your Loadout",
+    maxUnits: "(Max 5 Units)",
+    confirmLoadout: "Confirm Loadout",
     gameOver: 'Game Over',
     reachedFarm: 'The zombies reached your farm!',
     finalWealth: 'Final Wealth',
@@ -89,10 +164,42 @@ const TRANSLATIONS: Record<Language, any> = {
     gameOverDefeat: 'GAME OVER',
     zombiesWin: 'The zombies took over!',
     upgradeEffect: 'Upgrade Effect',
-    damage: 'Damage'
+    damage: 'Damage',
+    firerate: 'Firerate',
+    reward: 'Reward',
+    health: 'Health',
+    infinite: 'Infinite Mode',
+    farwest: 'Badlands Outpost',
+    level: 'LEVEL',
+    production: 'Production',
+    victims: 'Victims',
+    back: 'Back',
+    zombieNormalName: 'Normal Zombie',
+    zombieNormalDesc: 'Your average walker. Slow but steady.',
+    militantName: 'Militant',
+    militantDesc: 'Fast-firing military unit with versatile detection.',
+    zombieSpeedyName: 'Speedy Zombie',
+    zombieSpeedyDesc: 'Fast and tricky. Don\'t let them get close.',
+    zombieSlowName: 'Slow Zombie',
+    zombieSlowDesc: 'A massive tanky zombie. Hard to take down.',
+    shotgunnerName: 'Shotgunner',
+    shotgunnerDesc: 'Powerful close-range unit with wide birdshot spread.',
+    freezerName: 'Freezer',
+    freezerDesc: 'Slows and freezes enemies with icy shots.',
+    zombieHiddenName: 'Hidden',
+    zombieHiddenDesc: 'Tricky invisible zombie. Above average speed.',
+    zombieBreaker2Name: 'Breaker2',
+    zombieBreaker2Desc: 'Spawns a Breaker on death.',
+    zombieBreakerName: 'Breaker',
+    zombieBreakerDesc: 'Very fast enemy.',
+    assassinName: 'Assassin',
+    assassinDesc: 'Silent but deadly melee specialist.',
+    jumpWave: 'Jump to Wave',
+    spawnZombie: 'Spawn Zombie',
+    lane: 'Lane',
   },
   it: {
-    title: 'DIFESA FATTORIA',
+    title: 'TDS Vs ZombieSSS',
     subtitle: 'Seleziona Difficoltà per Iniziare',
     veryeasy: 'Molto Facile',
     easy: 'Facile',
@@ -120,15 +227,25 @@ const TRANSLATIONS: Record<Language, any> = {
     closeBook: "Chiudi Libro",
     unitsTab: "Unità",
     zombiesTab: "Zombie",
+    attributesTab: "Attributi",
     scoutName: "Scout",
     scoutDesc: "Unità rapida per la difesa iniziale.",
+    soldierName: "Soldier",
+    soldierDesc: "Spara a raffiche. Versatile con ottimi potenziamenti.",
     farmName: "Farm",
     farmDesc: "Produce oro per comprare altre unità.",
     sniperName: "Sniper",
     sniperDesc: "Unità a lungo raggio che può colpire ogni lane.",
+    paintballerName: "Paintballer",
+    paintballerDesc: "Unità a danno d'area che usa paintball.",
+    demomanName: "Demoman",
+    demomanDesc: "Esperto di esplosivi che infligge ingenti danni ad area.",
+    selectLoadout: "Scegli il tuo Equipaggiamento",
+    maxUnits: "(Max 5 Unità)",
+    confirmLoadout: "Conferma Equipaggiamento",
     gameOver: 'Fine Giochi',
     reachedFarm: 'Gli zombie hanno invaso la fattoria!',
-    finalWealth: 'Ricchezza Finale',
+    finalWealth: 'Ricchezza finale',
     restartSim: 'Riavvia Simulazione',
     finalWave: '🚨 ONDATA FINALE IN ARRIVO! 🚨',
     wave: 'Ondata',
@@ -146,6 +263,13 @@ const TRANSLATIONS: Record<Language, any> = {
     max: 'MAX',
     peak: 'Efficienza Massima',
     prod: 'PROD.',
+    zombieBreaker2Name: 'Breaker2',
+    zombieBreaker2Desc: 'Rilascia un Breaker alla morte.',
+    zombieBreakerName: 'Breaker',
+    zombieBreakerDesc: 'Molto veloce.',
+    jumpWave: 'Salta a Ondata',
+    spawnZombie: 'Genera Zombie',
+    lane: 'Lane',
     next: 'PROSSIMO',
     upgrade: 'POTENZIA',
     upgradeTo: 'Potenzia a',
@@ -153,10 +277,52 @@ const TRANSLATIONS: Record<Language, any> = {
     gameOverDefeat: 'PARTITA FINITA',
     zombiesWin: 'Gli zombie hanno vinto!',
     upgradeEffect: 'Effetto Upgrade',
-    damage: 'Danni'
+    damage: 'Danni',
+    firerate: 'Cadenza',
+    reward: 'Premio',
+    health: 'Salute',
+    splash: 'Splash',
+    infinite: 'Modalità Infinita',
+    farwest: 'Avamposto Badlands',
+    level: 'LIVELLO',
+    production: 'Produzione',
+    victims: 'Vittime',
+    back: 'Indietro',
+    zombieNormalName: 'Zombie Normale',
+    zombieNormalDesc: 'Lo zombie medio. Lento ma costante.',
+    zombieBreaker2Name: 'Breaker 2',
+    zombieBreaker2Desc: 'Genera un Breaker alla morte.',
+    zombieBreakerName: 'Breaker',
+    zombieBreakerDesc: 'Molto veloce.',
+    militantName: 'Militante',
+    militantDesc: 'Unità militare a fuoco rapido con rilevamento versatile.',
+    zombieSpeedyName: 'Zombie Veloce',
+    zombieSpeedyDesc: 'Veloce e scattante. Non farlo avvicinare.',
+    zombieSlowName: 'Zombie Lento',
+    zombieSlowDesc: 'Un enorme zombie corazzato. Difficile da abbattere.',
+    zombieHiddenName: 'Nascosto',
+    zombieHiddenDesc: 'Zombie invisibile e scattante. Velocità sopra la media.',
+    zombieBossName: 'Boss Normale',
+    zombieBossDesc: 'Un titano enorme con immunità assolute. Terrificante.',
+    shotgunnerName: 'Fuciliere',
+    shotgunnerDesc: 'Spara a corto raggio con un ampio raggio d\'azione.',
+    attrBloated: 'Gonfio',
+    attrBloatedDesc: 'Raddoppia la salute dello zombie. Lo rende più grande e lento.',
+    attrTank: 'Corazzato',
+    attrTankDesc: 'Riduce tutti i danni a 1 HP, tranne se l\'attaccante ha Lead Detection.',
+    attrNimble: 'Scattante',
+    attrNimbleDesc: 'Rende lo zombie due volte più veloce.',
+    attrRegen: 'Rigenerazione',
+    attrRegenDesc: 'Rigenera il 2% della salute ogni 2 secondi.',
+    attrBoss: 'Boss',
+    attrBossDesc: 'Appare solo una volta! Immune a quasi tutti gli stati negativi e si muove anche se stordito.',
+    freezerName: 'Congelatore',
+    freezerDesc: 'Rallenta e congela i nemici con colpi ghiacciati.',
+    assassinName: 'Assassino',
+    assassinDesc: 'Unità corpo a corpo furtiva con danni elevati.',
   },
   de: {
-    title: 'BAUERNHOF ABWEHR',
+    title: 'TDS Vs ZombieSSS',
     subtitle: 'Schwierigkeit wählen',
     veryeasy: 'Sehr Einfach',
     easy: 'Einfach',
@@ -171,6 +337,7 @@ const TRANSLATIONS: Record<Language, any> = {
     version: 'Simulation v2.5.0',
     money: 'Geld',
     lives: 'Basis Leben',
+    zombieName: 'Zombie-Name',
     menu: 'Menü',
     pause: 'PAUSE',
     music: 'Musik',
@@ -181,6 +348,24 @@ const TRANSLATIONS: Record<Language, any> = {
     zombieBook: 'Zombie-Buch',
     almanacTitle: "Der Zombie-Almanach",
     closeBook: "Buch schließen",
+    unitsTab: "Einheiten",
+    zombiesTab: "Zombies",
+    attributesTab: "Attribute",
+    scoutName: "Späher",
+    scoutDesc: "Schnelle Einheit für die frühe Verteidigung.",
+    soldierName: "Soldat",
+    soldierDesc: "Schießt in Salven. Vielseitig mit guten Upgrades.",
+    farmName: "Farm",
+    farmDesc: "Produziert Gold, um mehr Einheiten zu kaufen.",
+    sniperName: "Scharfschütze",
+    sniperDesc: "Einheit mit großer Reichweite.",
+    paintballerName: "Paintballer",
+    paintballerDesc: "Einheit mit Flächenschaden.",
+    demomanName: "Demoman",
+    demomanDesc: "Spezialist für Sprengstoffe mit hohem Flächenschaden.",
+    selectLoadout: "Ausrüstung wählen",
+    maxUnits: "(Max. 5 Einheiten)",
+    confirmLoadout: "Ausrüstung bestätigen",
     gameOver: 'Game Over',
     reachedFarm: 'Die Zombies haben den Hof erreicht!',
     finalWealth: 'Endvermögen',
@@ -202,14 +387,57 @@ const TRANSLATIONS: Record<Language, any> = {
     peak: 'Maximale Effizienz',
     prod: 'PROD.',
     next: 'NÄCHSTE',
-    upgrade: 'UPGRADE',
+    upgrade: 'VERBESSERN',
     upgradeTo: 'Verbessern zu',
     gameOverVictory: 'SIEG!',
     gameOverDefeat: 'SPIEL VORBEI',
-    zombiesWin: 'Die Zombies haben gewonnen!'
+    zombiesWin: 'Die Zombies haben gewonnen!',
+    upgradeEffect: 'Effekt',
+    damage: 'Schaden',
+    firerate: 'Feuerrate',
+    reward: 'Belohnung',
+    health: 'Gesundheit',
+    infinite: 'Endlosmodus',
+    farwest: 'Badlands-Außenposten',
+    level: 'LEVEL',
+    production: 'Produktion',
+    victims: 'Opfer',
+    back: 'Zurück',
+    zombieNormalName: 'Normaler Zombie',
+    zombieNormalDesc: 'Dein durchschnittlicher Läufer. Langsam aber stetig.',
+    zombieSpeedyName: 'Schneller Zombie',
+    zombieSpeedyDesc: 'Schnell und trickreich. Lass sie nicht zu nah kommen.',
+    zombieSlowName: 'Langsamer Zombie',
+    zombieSlowDesc: 'Ein riesiger, gepanzerter Zombie. Schwer zu besiegen.',
+    zombieBreaker2Name: 'Breaker2',
+    zombieBreaker2Desc: 'Erschafft einen Breaker beim Tod.',
+    zombieBreakerName: 'Breaker',
+    zombieBreakerDesc: 'Sehr schneller Feind.',
+    militantName: 'Militant',
+    militantDesc: 'Schnell feuernde Militäreinheit mit vielseitiger Erkennung.',
+    zombieHiddenName: 'Versteckt',
+    zombieHiddenDesc: 'Tückischer unsichtbarer Zombie. Überdurchschnittliche Geschwindigkeit.',
+    zombieBossName: 'Normaler Boss',
+    zombieBossDesc: 'Ein gewaltiger Titan mit absoluter Immunität. Furchterregend.',
+    attrBloated: 'Aufgebläht',
+    attrBloatedDesc: 'Verdoppelt die Gesundheit. Macht den Zombie größer und langsamer.',
+    attrTank: 'Gepanzerert',
+    attrTankDesc: 'Reduziert Schaden auf 1 HP, außer bei Lead Detection.',
+    attrNimble: 'Flink',
+    attrNimbleDesc: 'Macht den Zombie doppelt so schnell.',
+    attrRegen: 'Heilung',
+    attrRegenDesc: 'Regeneriert alle 2 Sekunden 2% Gesundheit.',
+    attrBoss: 'Boss',
+    attrBossDesc: 'Erscheint nur einmal pro Spiel! Immun gegen fast alle Statuseffekte und bewegt sich auch im betäubten Zustand.',
+    shotgunnerName: 'Schrotflintenschütze',
+    shotgunnerDesc: 'Sprüht Kugeln über mehrere Bahnen.',
+    freezerName: 'Freezer',
+    freezerDesc: 'Verlangsamt und friert Feinde mit Eisgeschossen ein.',
+    assassinName: 'Assassine',
+    assassinDesc: 'Heimliche Nahkampfeinheit mit hohem Schaden.',
   },
   meme: {
-    title: 'PROTECC DA FARM',
+    title: 'TDS Vs ZombieSSS',
     subtitle: 'Pick ur poison boi',
     veryeasy: 'Baby Mode',
     easy: 'Ez Clap',
@@ -224,6 +452,7 @@ const TRANSLATIONS: Record<Language, any> = {
     version: 'Meme Edition v6.9',
     money: 'Stonks',
     lives: 'Health Bar',
+    zombieName: 'Zombie Boi',
     menu: 'Pause Room',
     pause: 'WAIT PLS',
     music: 'Vibes',
@@ -234,6 +463,26 @@ const TRANSLATIONS: Record<Language, any> = {
     zombieBook: 'Dex',
     almanacTitle: "Zombie Wiki",
     closeBook: "Done Reading",
+    unitsTab: "Bros",
+    zombiesTab: "Meanies",
+    attributesTab: "Buffs",
+    scoutName: "Speedy Boy",
+    scoutDesc: "Run fast, hit fast.",
+    farmName: "Monis",
+    farmDesc: "Stonks machine.",
+    sniperName: "Long Boi",
+    sniperDesc: "Sniping from Africa.",
+    paintballerName: "Color Boi",
+    paintballerDesc: "Painting is my passion.",
+    soldierName: "Shooty Boi",
+    soldierDesc: "Fires in bursts. Much shoot.",
+    demomanName: "Boom Boi",
+    demomanDesc: "Big explosions lol.",
+    assassinName: "Edge Lord",
+    assassinDesc: "Studied the blade while u were partying.",
+    selectLoadout: "Pick ur Squad",
+    maxUnits: "(Max 5 Bros)",
+    confirmLoadout: "Squad Ready",
     gameOver: 'L + RATIO',
     reachedFarm: 'Zombies go brrr inside ur house!',
     finalWealth: 'Net Worth',
@@ -246,7 +495,7 @@ const TRANSLATIONS: Record<Language, any> = {
     upgradeAll: 'God Mode Units',
     stunAll: 'Bonk Zombies',
     freezeUnits: 'Don\'t Move!',
-    unfreezeUnits: 'Running state',
+    unfreezeUnits: 'Gotta go fast',
     freezeZombies: 'Ice Ice Baby',
     unfreezeZombies: 'Thaw out',
     revive: 'Respawn',
@@ -259,10 +508,49 @@ const TRANSLATIONS: Record<Language, any> = {
     upgradeTo: 'Evolve into',
     gameOverVictory: 'VICTORY ROYALE!',
     gameOverDefeat: 'L + RATIO',
-    zombiesWin: 'Skibidi Toilet took ur farm!'
+    zombiesWin: 'Skibidi Toilet took ur farm!',
+    upgradeEffect: 'Buffs',
+    damage: 'Ouch',
+    firerate: 'Brrr',
+    reward: 'Loot',
+    health: 'HP',
+    infinite: 'Endless Grind',
+    farwest: 'Yeehaw Badlands',
+    level: 'LEVEL',
+    production: 'Money Print',
+    victims: 'Noobs',
+    back: 'U-Turn',
+    zombieNormalName: 'Normal Boi',
+    zombieNormalDesc: 'Just a regular dude looking for a snack.',
+    zombieSpeedyName: 'Speedy Boi',
+    zombieSpeedyDesc: 'He fast af boi.',
+    zombieSlowName: 'Chonky Boi',
+    zombieSlowDesc: 'O lawd he comin.',
+    zombieBreaker2Name: 'Breaker2',
+    zombieBreaker2Desc: 'Spawns a Breaker on death lol.',
+    zombieBreakerName: 'Breaker',
+    zombieBreakerDesc: 'Fast af boi.',
+    zombieHiddenName: 'JOHN CENA',
+    zombieHiddenDesc: "U CAN'T SEE HIM",
+    zombieBossName: 'BIG CHUNGUS',
+    zombieBossDesc: 'Absolute unit. Refuses to elaborate. Leaves (ur farm in ruins).',
+    shotgunnerName: 'Shooty Dude',
+    shotgunnerDesc: 'Does a big blast. Much damage.',
+    militantName: 'Militant',
+    militantDesc: 'Fast-firing military unit with versatile detection.',
+    attrBloated: 'Thicc',
+    attrBloatedDesc: 'More HP, much size. Big chonk.',
+    attrTank: 'Vibe Check',
+    attrTankDesc: 'No damage allowed. You lack the drip (detection).',
+    attrNimble: 'I Am Speed',
+    attrNimbleDesc: 'Kerchoo! Twice as fast.',
+    attrRegen: 'Main Character Energy',
+    attrRegenDesc: 'Heals himself because plot armor.',
+    freezerName: 'Frosty Boi',
+    freezerDesc: 'Chill out man! Freeze dem meanies in place.',
   },
   gamer: {
-    title: 'GG DEFENSE',
+    title: 'TDS Vs ZombieSSS',
     subtitle: 'Queue for Match',
     veryeasy: 'Tutorial',
     easy: 'Noob friendly',
@@ -277,6 +565,7 @@ const TRANSLATIONS: Record<Language, any> = {
     version: 'Patch 2.5',
     money: 'Gold',
     lives: 'HP',
+    zombieName: 'Mob Type',
     menu: 'Esc',
     pause: 'PAUSED',
     music: 'BGM',
@@ -287,6 +576,30 @@ const TRANSLATIONS: Record<Language, any> = {
     zombieBook: 'Bestiary',
     almanacTitle: "Elite Bestiary",
     closeBook: "Exit Intel",
+    unitsTab: "Classes",
+    zombiesTab: "Mobs",
+    attributesTab: "Passives",
+    scoutName: 'Scout',
+    scoutDesc: 'Early game carry.',
+    farmName: 'Eco',
+    farmDesc: 'Farm gold for better gear.',
+    sniperName: 'Marksman',
+    sniperDesc: 'Long range high DPS.',
+    paintballerName: 'Mage',
+    paintballerDesc: 'AoE crowd control.',
+    soldierName: 'Infantry',
+    soldierDesc: 'Burst DPS.',
+    demomanName: 'Demolition',
+    demomanDesc: 'Explosive AoE.',
+    assassinName: 'Phantom',
+    assassinDesc: 'High burst melee carry.',
+    freezerName: 'Cryo-Mage',
+    freezerDesc: 'CC and slowing effects.',
+    shotgunnerName: 'Vanguard',
+    shotgunnerDesc: 'Short range AoE burst.',
+    selectLoadout: "Select Classes",
+    maxUnits: "(Max 5 Slots)",
+    confirmLoadout: "Ready Up",
     gameOver: 'DEFEAT',
     reachedFarm: 'Base Infiltrated! Mission Failed.',
     finalWealth: 'Total Score',
@@ -309,7 +622,381 @@ const TRANSLATIONS: Record<Language, any> = {
     prod: 'DPS',
     next: 'NEXT TIER',
     upgrade: 'LVL UP',
-    upgradeTo: 'Craft'
+    upgradeTo: 'Craft',
+    gameOverVictory: 'VICTORY!',
+    gameOverDefeat: 'GAME OVER',
+    zombiesWin: 'The mobs won!',
+    upgradeEffect: 'Stat Boost',
+    damage: 'DMG',
+    firerate: 'Speed',
+    reward: 'Loot',
+    health: 'HP',
+    infinite: 'Survival Mode',
+    farwest: 'Badlands Outpost',
+    level: 'LEVEL',
+    production: 'Economy',
+    victims: 'Frags',
+    back: 'ESC',
+    zombieNormalName: 'Basic Mob',
+    zombieNormalDesc: 'Tier 1 enemy. Easy XP.',
+    zombieSpeedyName: 'Sprinter',
+    zombieSpeedyDesc: 'High movement speed. Clear them fast.',
+    zombieSlowName: 'Elite Tank',
+    zombieSlowDesc: 'High HP pool. Focus fire.',
+    zombieBossName: 'Raid Boss',
+    zombieBossDesc: 'Legendary enemy detected. Gear up.',
+    zombieHiddenName: 'Phantom',
+    zombieHiddenDesc: 'Invisible mob. Focus detection.',
+    zombieBreaker2Name: 'Breaker2',
+    zombieBreaker2Desc: 'Spawns a Breaker on death.',
+    zombieBreakerName: 'Breaker',
+    zombieBreakerDesc: 'High speed entry.',
+    militantName: 'Militant',
+    militantDesc: 'Fast-firing military unit with versatile detection.',
+    attrBloated: 'Overbuffed',
+    attrBloatedDesc: 'Double HP multiplier. Large hit box.',
+    attrTank: 'Armor Plate',
+    attrTankDesc: 'Damage reduction applied. Use armor pierce.',
+    attrNimble: 'Sweaty',
+    attrNimbleDesc: 'Movement speed buffed 200%.',
+    attrRegen: 'Health Pack',
+    attrRegenDesc: 'Auto-heal passive enabled.',
+  },
+  pirate: {
+    title: 'TDS Vs Sea Lubbers',
+    subtitle: 'Choose yer Captain\'s Difficulty',
+    veryeasy: 'Landlubber',
+    easy: 'Swab',
+    normal: 'Sailor',
+    hard: 'First Mate',
+    insane: 'Pirate Lord',
+    relaxed: 'Calm Seas',
+    ultimate: 'Kraken\'s Wake',
+    standard: 'Classic Voyage',
+    starting: 'Stashed Booty',
+    openAlmanac: '📖 Read the Captain\'s Log',
+    version: 'Voyage v2.5',
+    money: 'Doubloons',
+    lives: 'Hull Integrity',
+    zombieName: 'Sea Monster',
+    menu: 'Map Room',
+    pause: 'DROP ANCHOR',
+    music: 'Sea Shanty',
+    sfx: 'Cannon Fire',
+    resume: 'Set Sail',
+    restart: 'Mutiny!',
+    mainMenu: 'Back to Port',
+    zombieBook: 'Bounty List',
+    almanacTitle: "The Sea Monster Bestiary",
+    closeBook: "Close Log",
+    unitsTab: "Crew",
+    zombiesTab: "Monsters",
+    attributesTab: "Curses",
+    scoutName: "Lookout",
+    scoutDesc: "Quick eyes fer early sightings.",
+    farmName: "Treasure Map",
+    farmDesc: "Digs up doubloons fer the crew.",
+    sniperName: "Deadeye",
+    sniperDesc: "Long shots from the crow's nest.",
+    paintballerName: "Ink Slinger",
+    paintballerDesc: "Throws kraken ink at the horde.",
+    soldierName: "Mariner",
+    soldierDesc: "Fires rapid salvos at sea dogs.",
+    demomanName: "Powder Monkey",
+    demomanDesc: "Exploding barrels fer everyone!",
+    selectLoadout: "Pick yer Crew",
+    maxUnits: "(Max 5 Mates)",
+    confirmLoadout: "All Hands on Deck",
+    gameOver: 'SHIPWRECKED',
+    reachedFarm: 'The monsters boarded the ship!',
+    finalWealth: 'Plunder Total',
+    restartSim: 'New Voyage',
+    finalWave: '🚨 THE KRAKEN DRAWS NEAR! 🚨',
+    wave: 'Tide',
+    modConsole: 'Captain\'s Cheat Sheet',
+    infiniteMoney: 'Infinite Doubloons',
+    clearZombies: 'Scuttle Monsters',
+    upgradeAll: 'Grog fer Everyone',
+    stunAll: 'Daze the Lubbers',
+    freezeUnits: 'Freeze Crew',
+    unfreezeUnits: 'Thaw Crew',
+    freezeZombies: 'Freeze Sea Monsters',
+    unfreezeZombies: 'Thaw Sea Monsters',
+    revive: 'Back from Davy Jones',
+    sell: 'Walk the Plank',
+    max: 'LEGENDARY',
+    peak: 'Master Pirate',
+    prod: 'LOOT',
+    next: 'LEVEL UP',
+    upgrade: 'HARDEN HULL',
+    upgradeTo: 'Promote to',
+    gameOverVictory: 'VICTORY!',
+    gameOverDefeat: 'GAME OVER',
+    zombiesWin: 'The monsters took yer booty!',
+    upgradeEffect: 'Enhancement',
+    damage: 'Force',
+    firerate: 'Reload Speed',
+    reward: 'Bounty',
+    health: 'Life',
+    infinite: 'Endless Horizon',
+    farwest: 'Tortuga Outpost',
+    level: 'RANK',
+    production: 'Income',
+    victims: 'Kill Count',
+    back: 'Retreat',
+    zombieNormalName: 'Drowned Soul',
+    zombieNormalDesc: 'Just a regular wet walker.',
+    zombieSpeedyName: 'Ghost Runner',
+    zombieSpeedyDesc: 'Fast as the wind.',
+    zombieSlowName: 'Barnacle Brute',
+    zombieSlowDesc: 'Thick shell, hard to crack.',
+    attrBloated: 'Waterlogged',
+    attrBloatedDesc: 'Heavy with sea water. More health.',
+    attrTank: 'Ironclad',
+    attrTankDesc: 'Only strong shots can pierce this hull.',
+    attrNimble: 'Quick Fins',
+    attrNimbleDesc: 'Fastest in the seven seas.',
+    attrRegen: 'Siren\'s Song',
+    attrRegenDesc: 'Heals wounds over time.',
+    shotgunnerName: 'Blunderbuss Lad',
+    shotgunnerDesc: 'Does a big blast of grape shot across the deck.',
+    freezerName: 'Frosty Mate',
+    freezerDesc: 'Chills the sea monsters with icy shots from the deep.',
+    zombieHiddenName: 'Ghostly Swashbuckler',
+    zombieHiddenDesc: 'A spectral pirate ye can barely see, moving with the tide.',
+    zombieBossName: 'Sea King Boss',
+    zombieBossDesc: 'An absolute beast of the deep. Terrifying!',
+    zombieBreaker2Name: 'Hull Breaker 2',
+    zombieBreaker2Desc: 'Releases a smaller breaker when destroyed.',
+    zombieBreakerName: 'Hull Breaker',
+    zombieBreakerDesc: 'Fast as a shark!',
+    militantName: 'Privateer',
+    militantDesc: 'Rapid fire crewmate with sharp eyes.',
+    assassinName: 'Shadow Knight',
+    assassinDesc: 'Melee specialist with deadly precision.',
+  },
+  lolcat: {
+    title: 'TDS Vs ZOMBEES',
+    subtitle: 'Pick ur Difuculty kthxbai',
+    veryeasy: 'Babee Mode',
+    easy: 'Ez Pz',
+    normal: 'SrSLY?',
+    hard: 'Big Brain Cat',
+    insane: 'I CAN HAZ DEATH',
+    relaxed: 'Chill Cat',
+    ultimate: 'Game Over Mane',
+    standard: 'Kitten Play',
+    starting: 'Initial Monies',
+    openAlmanac: '📖 Read Da Book',
+    version: 'Minecraft v2.5 mod',
+    money: 'Shiny Coins',
+    lives: 'Kat Lifes',
+    zombieName: 'Bad Guy',
+    menu: 'Meow Menu',
+    pause: 'PAWS',
+    music: 'Meowsic',
+    sfx: 'Noise Maker',
+    resume: 'Keep Goin',
+    restart: 'Try Again Meow',
+    mainMenu: 'Go Home',
+    zombieBook: 'Moar Intel',
+    almanacTitle: "ZOMBEES INFO",
+    closeBook: "Bai Bai",
+    unitsTab: "Bros",
+    zombiesTab: "Enemees",
+    attributesTab: "Shiny Tingz",
+    scoutName: "Fast Katt",
+    scoutDesc: "Run fast, scratch hard.",
+    soldierName: "Soldier Katt",
+    soldierDesc: "Burst fire pew pew kitteh.",
+    farmName: "Gold Mine",
+    farmDesc: "Makes shiny coins for kats.",
+    sniperName: "Long Pew Pew",
+    sniperDesc: "Snipe from far away.",
+    paintballerName: "Color Katt",
+    paintballerDesc: "Paint da whole world.",
+    demomanName: "Boom Katt",
+    demomanDesc: "I CAN HAZ EXPLOSIONS!",
+    selectLoadout: "Pick ur Kat Squad",
+    maxUnits: "(Max 5 Kats)",
+    confirmLoadout: "Ready Meow",
+    gameOver: 'UR DED',
+    reachedFarm: 'Zombees in ur base!',
+    finalWealth: 'Shiny Total',
+    restartSim: 'Reset pls',
+    finalWave: '🚨 DA BOSS IS COMIN! 🚨',
+    wave: 'Level',
+    modConsole: 'Haxor Mode',
+    infiniteMoney: 'Infinite Shiny',
+    clearZombies: 'Delete Zombees',
+    upgradeAll: 'Max Kats',
+    stunAll: 'Bonk Zombees',
+    freezeUnits: 'Freeze Kats',
+    unfreezeUnits: 'Unfreeze Kats',
+    freezeZombies: 'Freeze Zombees',
+    unfreezeZombies: 'Unfreeze Zombees',
+    revive: 'Respawn Meow',
+    sell: 'Throw Away',
+    max: 'MAXED OUT',
+    peak: 'Alpha Cat',
+    prod: 'COINS',
+    next: 'MOAR LEVEL',
+    upgrade: 'MAKE STRONGER',
+    upgradeTo: 'Evolve into',
+    gameOverVictory: 'VICTORY!',
+    gameOverDefeat: 'FAIL',
+    zombiesWin: 'U lost ur cheeseburger!',
+    upgradeEffect: 'New Skillz',
+    damage: 'Dmg',
+    firerate: 'Attak Speed',
+    reward: 'Lootz',
+    health: 'Hp',
+    infinite: 'Forever mode',
+    level: 'LVL',
+    production: 'Money Print',
+    victims: 'Got Em',
+    back: 'Go bak',
+    zombieNormalName: 'Normal Zombee',
+    zombieNormalDesc: 'Just a regular hungry guy.',
+    zombieSpeedyName: 'Fast Zombee',
+    zombieSpeedyDesc: 'He zoomin.',
+    zombieSlowName: 'Fat Zombee',
+    zombieSlowDesc: 'Olawd he bloated.',
+    zombieBossName: 'Final Boss Man',
+    zombieBossDesc: 'Too scarry 4 me.',
+    zombieBreaker2Name: 'Breaker Katt 2',
+    zombieBreaker2Desc: 'Summons a tiny breaker kitteh when ded.',
+    zombieBreakerName: 'Breaker Katt',
+    zombieBreakerDesc: 'Zoomin fast!',
+    militantName: 'Militant Katt',
+    militantDesc: 'Fast pew pew kitteh with radar eyes.',
+    shotgunnerName: 'Shotgun Boi',
+    shotgunnerDesc: 'Big boom in ur face.',
+    attrBloated: 'Chonky',
+    attrBloatedDesc: 'Double health. Much size.',
+    attrTank: 'Metal Skin',
+    attrTankDesc: 'Armor plating. Needs big guns.',
+    attrNimble: 'Super Zoomies',
+    attrNimbleDesc: 'Fastest zombee ever.',
+    attrRegen: 'Auto Heal',
+    attrRegenDesc: 'Healin himself lol.',
+    freezerName: 'Icy Katt',
+    freezerDesc: 'Make zombees cold and slow lol.',
+    assassinName: 'Nin-ja Katt',
+    assassinDesc: 'Vry fast sword kitteh.',
+  },
+  briish: {
+    title: 'TDS Vs Unruly Gentry',
+    subtitle: 'Select your Difficulty, Governor',
+    veryeasy: 'Absolute Doddle',
+    easy: 'Piece of Cake',
+    normal: 'Proper Match',
+    hard: 'Right Tough',
+    insane: 'Complete Nightmare',
+    relaxed: 'Afternoon Tea',
+    ultimate: 'Bloody Impossible',
+    standard: 'Right Proper Game',
+    starting: 'Initial Funds',
+    openAlmanac: '📖 Consult the Journal',
+    version: 'Empire Edition v2.5',
+    money: 'Proper Wealth',
+    lives: 'BOHOOWHOHA',
+    zombieName: 'Nuisance Type',
+    menu: 'Options Menu',
+    pause: 'HAVE A BREAK',
+    music: 'Orchestra',
+    sfx: 'Audio Effects',
+    resume: 'Go on then',
+    restart: 'Fresh Start, innit?',
+    mainMenu: 'Back to London',
+    zombieBook: 'Rogue Gallery',
+    almanacTitle: "The Victorian Bestiary",
+    closeBook: "Close Journal",
+    unitsTab: "Gentlemen",
+    zombiesTab: "Scallywags",
+    attributesTab: "Traits",
+    scoutName: "Runner",
+    scoutDesc: "A quick lad for scouting duties.",
+    soldierName: "Soldier Chap",
+    soldierDesc: "Fires in bursts, a proper warrior.",
+    farmName: "Tea Plantation",
+    farmDesc: "Harvests leaves for more funds.",
+    sniperName: "Marksman",
+    sniperDesc: "A proper shot from a distance, what?",
+    paintballerName: "Artist",
+    paintballerDesc: "Spreads colour across the field.",
+    shotgunnerName: "Shotgunner Lad",
+    shotgunnerDesc: "Crowd control with a wide spread.",
+    demomanName: "Grenadier",
+    demomanDesc: "Specialises in proper explosions.",
+    selectLoadout: "Select your Gentlemen",
+    maxUnits: "(Max 5 Chaps)",
+    confirmLoadout: "Ready for Action",
+    gameOver: 'TA-TA',
+    reachedFarm: 'The scallywags ruined the tea party!',
+    finalWealth: 'Total Fortune',
+    restartSim: 'Try again, mate',
+    finalWave: '🚨 THE FINAL CONFRONTATION! 🚨',
+    wave: 'Onslaught',
+    modConsole: 'Gentleman\'s Cheats',
+    infiniteMoney: 'Infinite Pounds',
+    clearZombies: 'Clear the Rabble',
+    upgradeAll: 'Polished to Perfection',
+    stunAll: 'Properly Dazed',
+    freezeUnits: 'Freeze Chaps',
+    unfreezeUnits: 'Unfreeze Chaps',
+    freezeZombies: 'Freeze Scallywags',
+    unfreezeZombies: 'Unfreeze Scallywags',
+    revive: 'Second Life',
+    sell: 'Redundant',
+    max: 'PREMIER',
+    peak: 'Top Tier Chap',
+    prod: 'FUNDS',
+    next: 'NEXT RANK',
+    upgrade: 'IMPROVE',
+    upgradeTo: 'Promote to',
+    gameOverVictory: 'SMASHING!',
+    gameOverDefeat: 'BIT OF A SHAME',
+    zombiesWin: 'The rabble won, what a pity!',
+    upgradeEffect: 'Improvement',
+    damage: 'Punch',
+    firerate: 'Pace',
+    reward: 'Payment',
+    health: 'Vigour',
+    infinite: 'Endless Evening',
+    farwest: 'Outpost',
+    level: 'RANK',
+    production: 'Revenue',
+    victims: 'Arrests',
+    back: 'Toodle-oo',
+    zombieNormalName: 'Common Drifter',
+    zombieNormalDesc: 'Just an ordinary nuisance.',
+    zombieSpeedyName: 'Quick Scoundrel',
+    zombieSpeedyDesc: 'Wait for no man, this one.',
+    zombieSlowName: 'Bulky Brute',
+    zombieSlowDesc: 'A right tank, he is.',
+    zombieHiddenName: 'Stealthy Fellow',
+    zombieHiddenDesc: 'A right tricky invisible chap with a brisk pace.',
+    zombieBossName: 'Royal Boss',
+    zombieBossDesc: 'A proper giant of a machine, it is. Right scary!',
+    zombieBreaker2Name: 'Breaker Chap 2',
+    zombieBreaker2Desc: 'Releases a smaller scallywag upon defeat.',
+    zombieBreakerName: 'Breaker Chap',
+    zombieBreakerDesc: 'Right quick fellow.',
+    militantName: 'Militant Gentleman',
+    militantDesc: 'Fast-firing soldier with brilliant detection.',
+    attrBloated: 'Portly',
+    attrBloatedDesc: 'A bit top heavy. More health.',
+    attrTank: 'Tweed Armor',
+    attrTankDesc: 'Quite resilient, needs special attention.',
+    attrNimble: 'Sprightly',
+    attrNimbleDesc: 'Quick as a greyhound.',
+    attrRegen: 'Stiff Upper Lip',
+    attrRegenDesc: 'Recovers from setbacks quickly.',
+    freezerName: 'Icy Chap',
+    freezerDesc: 'Chills the scallywags to the bone with freezing pellets.',
+    assassinName: 'Shadow Knight',
+    assassinDesc: 'Melee specialist with deadly precision.',
   }
 };
 
@@ -356,6 +1043,13 @@ const DIFFICULTY_CONFIG: Record<Difficulty, DifficultySettings> = {
     background: 'bg-gradient-to-b from-[#2a0c0c] via-[#4d1a1a] to-[#2a0c0c] shadow-[inset_0_0_200px_rgba(255,69,0,0.4)]',
     moneyMult: 0.75,
     maxWaves: 50
+  },
+  'Infinite': {
+    startingMoney: 600,
+    spawnRateMult: 1.0,
+    background: 'bg-[#d2b48c] shadow-[inset_0_0_200px_rgba(139,69,19,0.5)]',
+    moneyMult: 1.0,
+    maxWaves: 999999
   }
 };
 
@@ -370,9 +1064,10 @@ interface Projectile {
   y: number;
   targetX: number;
   targetY: number;
-  type: 'bullet' | 'dart' | 'sniper-bullet';
+  type: 'bullet' | 'dart' | 'sniper-bullet' | 'paintball' | 'knife' | 'grenade';
   color: string;
   rotation: number;
+  duration?: number;
 }
 
 interface Hit {
@@ -381,6 +1076,7 @@ interface Hit {
   y: number;
   createdAt: number;
   color: string;
+  type?: 'default' | 'whirlwind';
 }
 
 interface BaseEntity {
@@ -393,56 +1089,105 @@ interface BaseEntity {
   row: number;
 }
 
-type UnitType = 'farm' | 'scout' | 'sniper';
-
 interface Unit extends BaseEntity {
   unitType: UnitType;
   level: number;
   lastProductionTime?: number;
   lastAttackTime?: number;
   isStunImmune: boolean;
+  targetId?: string;
+  totalDamageDealt: number;
+  burstRemaining?: number;
+  abilityCooldowns?: Record<string, number>;
+  slashCount?: number;
+  damageSinceLastFan?: number;
 }
 
 interface Zombie extends BaseEntity {
   name: string;
+  zombieType: 'NORMAL' | 'SPEEDY' | 'SLOW' | 'NORMAL_BOSS' | 'HIDDEN' | 'BREAKER2' | 'BREAKER';
   speed: number;
   damage: number;
   isEating: boolean;
   isBloated: boolean;
   isTank: boolean;
+  isNimble: boolean;
+  isRegen: boolean;
+  isBoss: boolean;
+  hasBossAttribute?: boolean;
+  lastRegenTime?: number;
+  baseMaxHp: number; // Max HP before bloated multiplier for regen calc
   isLead?: boolean;
   isFlying?: boolean;
   reward: number;
   variant: number;
   isStunned: boolean;
   isHidden?: boolean;
+  chillAmount: number;
+  isFrozen: boolean;
+  frozenUntil: number;
+  defenseReduc?: number;
 }
 
 const ZOMBIE_TYPES = {
   NORMAL: {
-    name: 'Normal',
-    description: 'Il tuo zombie medio. Non molto intelligente, ma molto persistente.',
+    name: 'zombieNormalName',
+    description: 'zombieNormalDesc',
     baseHp: 6,
     speedPerGrid: 4.7, // seconds per grid
     reward: 5,
     damage: 0.5,
   },
   SPEEDY: {
-    name: 'Speedy',
-    description: 'Estremamente veloce e imprevedibile. Difficile da colpire!',
+    name: 'zombieSpeedyName',
+    description: 'zombieSpeedyDesc',
     baseHp: 4,
     speedPerGrid: 1.8,
-    reward: 5,
+    reward: 8,
     damage: 0.4,
   },
-  TANK: {
-    name: 'Tank',
-    description: 'Corazzato. Riduce tutto il danno ricevuto (tranne collisioni) a 1 HP.',
+  SLOW: {
+    name: 'zombieSlowName',
+    description: 'zombieSlowDesc',
     baseHp: 30,
-    speedPerGrid: 6.5,
-    reward: 15,
-    damage: 1.2,
-  }
+    speedPerGrid: 5.1,
+    reward: 10,
+    damage: 1.0,
+  },
+  HIDDEN: {
+    name: 'zombieHiddenName',
+    description: 'zombieHiddenDesc',
+    baseHp: 35,
+    speedPerGrid: 1.49,
+    reward: 20,
+    damage: 1.0,
+  },
+  NORMAL_BOSS: {
+    name: 'zombieBossName',
+    description: 'zombieBossDesc',
+    baseHp: 200,
+    speedPerGrid: 5.4,
+    reward: 150,
+    damage: 5.0,
+  },
+  BREAKER2: {
+    name: 'zombieBreaker2Name',
+    description: 'zombieBreaker2Desc',
+    baseHp: 80,
+    speedPerGrid: 1.33,
+    reward: 25,
+    damage: 1.0,
+    image: '/Enemys/Normal/Breakers/Breaker2/Breaker2Fallen.webp'
+  },
+  BREAKER: {
+    name: 'zombieBreakerName',
+    description: 'zombieBreakerDesc',
+    baseHp: 50,
+    speedPerGrid: 0.42,
+    reward: 5,
+    damage: 0.8,
+    image: '/Enemys/Normal/Breakers/Breaker/BreakerFallen.webp'
+  },
 };
 
 interface Lawnmower {
@@ -455,10 +1200,34 @@ interface Lawnmower {
 
 const SCOUT_LEVELS = [
   { level: 0, cost: 125, upgradeCost: 50, hp: 100, damage: 1, interval: 1025, sellPrice: 41, hasHiddenDetection: false, hasLeadDetection: false, name: 'Scout', appearance: '/Scout/Appearance/LO_Scout_0.webp', icon: '/Scout/Appearance/LO_Scout_0.webp', description: 'Unità rapida di ricognizione.' },
-  { level: 1, cost: 0, upgradeCost: 375, hp: 100, damage: 1, interval: 775, sellPrice: 58, hasHiddenDetection: false, hasLeadDetection: false, name: 'Scout L1', appearance: '/Scout/Appearance/LO_Scout_1.webp', icon: '/Scout/Upgrade/Scout1.webp', description: 'Firerate: 1.025 > 0.775' },
-  { level: 2, cost: 0, upgradeCost: 1350, hp: 100, damage: 3, interval: 775, sellPrice: 183, hasHiddenDetection: true, hasLeadDetection: false, name: 'Scout L2', appearance: '/Scout/Appearance/LO_Scout_2.webp', icon: '/Scout/Upgrade/Scout2.webp', description: 'Sblocca Hidden Detection (+2 Damage)' },
-  { level: 3, cost: 0, upgradeCost: 2200, hp: 100, damage: 8, interval: 625, sellPrice: 633, hasHiddenDetection: true, hasLeadDetection: false, name: 'Scout L3', appearance: '/Scout/Appearance/LO_Scout_3.webp', icon: '/Scout/Upgrade/Scout4.webp', description: 'Firerate: 0.775 > 0.625 (+5 Damage)' },
-  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 8, interval: 325, sellPrice: 1366, hasHiddenDetection: true, hasLeadDetection: false, name: 'Scout L4', appearance: '/Scout/Appearance/LO_Scout_4.webp', icon: '/Scout/Upgrade/Scout5.webp', description: 'Firerate: 0.625 > 0.325' },
+  { level: 1, cost: 0, upgradeCost: 375, hp: 100, damage: 1, interval: 775, sellPrice: 58, hasHiddenDetection: false, hasLeadDetection: false, name: 'Faster Reloading', appearance: '/Scout/Appearance/LO_Scout_1.webp', icon: '/Scout/Upgrade/Scout1.webp', description: 'Firerate: 1.025 > 0.775' },
+  { level: 2, cost: 0, upgradeCost: 1350, hp: 100, damage: 3, interval: 775, sellPrice: 183, hasHiddenDetection: true, hasLeadDetection: false, name: 'Precise Aiming', appearance: '/Scout/Appearance/LO_Scout_2.webp', icon: '/Scout/Upgrade/Scout2.webp', description: 'Sblocca Hidden Detection (+2 Damage)' },
+  { level: 3, cost: 0, upgradeCost: 2200, hp: 100, damage: 8, interval: 625, sellPrice: 633, hasHiddenDetection: true, hasLeadDetection: false, name: 'Stronger Equipment', appearance: '/Scout/Appearance/LO_Scout_3.webp', icon: '/Scout/Upgrade/Scout4.webp', description: 'Firerate: 0.775 > 0.625 (+5 Damage)' },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 8, interval: 325, sellPrice: 1366, hasHiddenDetection: true, hasLeadDetection: false, name: 'Akimbo Handguns', appearance: '/Scout/Appearance/LO_Scout_4.webp', icon: '/Scout/Upgrade/Scout5.webp', description: 'Firerate: 0.625 > 0.325' },
+];
+
+const SHOTGUNNER_LEVELS = [
+  { level: 0, cost: 800, upgradeCost: 300, hp: 100, damage: 2, bullets: 6, interval: 1025, range: 300, spread: 40, sellPrice: 266, hasHiddenDetection: false, hasLeadDetection: false, name: 'Shotgunner', appearance: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl0.webp', icon: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl0.webp', description: 'Bullets: 6 | Range: 3 | Spread: 40' },
+  { level: 1, cost: 0, upgradeCost: 1200, hp: 100, damage: 3, bullets: 6, interval: 1025, range: 300, spread: 40, sellPrice: 366, hasHiddenDetection: false, hasLeadDetection: false, name: 'Heavier Shells', appearance: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl1.webp', icon: '/Farm/Appearance/Shotgunner/Upgrade icon/Level1.webp', description: '+1 Damage' },
+  { level: 2, cost: 0, upgradeCost: 3400, hp: 100, damage: 3, bullets: 8, interval: 1025, range: 300, spread: 35, sellPrice: 766, hasHiddenDetection: true, hasLeadDetection: true, name: 'Shotgun Knowledge', appearance: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl2.webp', icon: '/Farm/Appearance/Shotgunner/Upgrade icon/ShotgunnerLevel2.webp', description: 'Bullets: 8 | Spread: 35 | +Hidden & Lead' },
+  { level: 3, cost: 0, upgradeCost: 9500, hp: 100, damage: 5, bullets: 8, interval: 825, range: 367, spread: 30, sellPrice: 1900, hasHiddenDetection: true, hasLeadDetection: true, name: 'Slug Madness', appearance: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl3.webp', icon: '/Farm/Appearance/Shotgunner/Upgrade icon/ShotgunnerLevel3.webp', description: '+2 Damage | Interval: 0.825s | Range: 3.67' },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 10, bullets: 9, interval: 825, range: 367, spread: 30, sellPrice: 5066, hasHiddenDetection: true, hasLeadDetection: true, name: 'Tactical Blowback', appearance: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl4.webp', icon: '/Farm/Appearance/Shotgunner/Upgrade icon/ShotgunnerLevel4.webp', description: '+5 Damage | Bullets: 9 | Spread: 30 | Range: 3.67' },
+];
+
+const ASSASSIN_LEVELS = [
+  { level: 0, cost: 300, upgradeCost: 450, hp: 100, damage: 3, interval: 625, sellPrice: 100, name: 'Assassin', appearance: '/Assassin/Aspect/AssassinLevel0.webp', icon: '/Assassin/Aspect/AssassinLevel0.webp', description: 'Quick unit with high damage attacks.', range: 5, hasHiddenDetection: false, hasLeadDetection: false },
+  { level: 1, cost: 0, upgradeCost: 750, hp: 100, damage: 6, interval: 525, sellPrice: 250, name: 'CQC Training', appearance: '/Assassin/Aspect/AssassinLevel1.webp', icon: '/Assassin/Upgrade icon/AssassinUpgrade1.webp', description: 'Damage: 6 (+3) | Interval: 0.525s', range: 5, hasHiddenDetection: false, hasLeadDetection: false },
+  { level: 2, cost: 0, upgradeCost: 2378, hp: 100, damage: 6, interval: 525, sellPrice: 500, name: 'Umbral Tempest', appearance: '/Assassin/Aspect/AssassinLevel2.webp', icon: '/Assassin/Upgrade icon/AssassinUpgrade2.webp', description: '+Hidden Detection | Whirlwind: Every 3rd hit, 12 DMG AoE (3 tiles)', range: 5, hasHiddenDetection: true, hasLeadDetection: false, hasWhirlwind: true, whirlwindDamage: 12, whirlwindRange: 3 },
+  { level: 3, cost: 0, upgradeCost: 5500, hp: 100, damage: 14, interval: 525, sellPrice: 1500, name: 'Ascended Shadows', appearance: '/Assassin/Aspect/AssassinLevel3.webp', icon: '/Assassin/Upgrade icon/AssassinUpgrade3.webp', description: 'Damage: 14 (+8) | Whirlwind +15 DMG', range: 5, hasHiddenDetection: true, hasLeadDetection: false, hasWhirlwind: true, whirlwindDamage: 27, whirlwindRange: 3 },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 35, interval: 525, sellPrice: 3500, name: 'Master Assassin', appearance: '/Assassin/Aspect/AssassinLevel4.webp', icon: '/Assassin/Upgrade icon/AssassinUpgrade4.webp', description: 'Damage: 35 (+21) | Fan of Knives (Range: 5)', range: 5, hasHiddenDetection: true, hasLeadDetection: false, hasWhirlwind: true, whirlwindDamage: 41, whirlwindRange: 3, hasFan: true, fanDamage: 60, fanThreshold: 500, fanRange: 5 },
+];
+
+const FREEZER_LEVELS = [
+  { level: 0, cost: 425, upgradeCost: 225, hp: 100, damage: 1, interval: 525, sellPrice: 141, maxSlow: 0.5, slowPerShot: 0.1, name: 'Freezer', appearance: '/Freezer/Apareance/KRFreezer0.webp', icon: '/Freezer/Apareance/KRFreezer0.webp', description: 'Slows down enemies. Max 50%.', hasHiddenDetection: false, hasLeadDetection: false },
+  { level: 1, cost: 0, upgradeCost: 650, hp: 100, damage: 2, interval: 525, sellPrice: 216, maxSlow: 0.6, slowPerShot: 0.15, name: 'Expedition Gear', appearance: '/Freezer/Apareance/KRFreezer1.webp', icon: '/Freezer/Upgrade/Freezer_Upgrade_1.webp', description: '+1 Damage | 60% Max Slow | 15% Shot Slow', hasHiddenDetection: false, hasLeadDetection: false },
+  { level: 2, cost: 0, upgradeCost: 2000, hp: 100, damage: 2, interval: 525, sellPrice: 433, maxSlow: 0.6, slowPerShot: 0.2, freezeDuration: 2000, name: 'Bundled Up!', appearance: '/Freezer/Apareance/KRFreezer2.webp', icon: '/Freezer/Upgrade/Freezer_Upgrade_2.webp', description: '+Hidden Detection | Freezes at max chill (2s)', hasHiddenDetection: true, hasLeadDetection: false },
+  { level: 3, cost: 0, upgradeCost: 4500, hp: 100, damage: 3, interval: 175, burstCount: 4, cooldown: 750, sellPrice: 2766, maxSlow: 0.75, slowPerShot: 0.25, freezeDuration: 2500, defenseReduction: 0.1, name: 'Arctic Soldier', appearance: '/Freezer/Apareance/KRFreezer3.webp', icon: '/Freezer/Upgrade/Freezer_Upgrade_3.webp', description: 'Burst: 4 | 75% Max Slow | 10% Def Shred | 2.5s Freeze', hasHiddenDetection: true, hasLeadDetection: false },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 5, interval: 175, burstCount: 7, cooldown: 750, sellPrice: 4500, maxSlow: 0.75, slowPerShot: 0.25, freezeDuration: 3000, defenseReduction: 0.1, hasAbility: true, name: "Arctic Master", appearance: '/Freezer/Apareance/KRFreezer4.webp', icon: '/Freezer/Upgrade/Freezer_Upgrade_4.webp', description: '+2 Damage | Burst: 7 | 3s Freeze | Frost Grenade', hasHiddenDetection: true, hasLeadDetection: false },
 ];
 
 const FARM_LEVELS = [
@@ -473,7 +1242,7 @@ const FARM_LEVELS = [
 // --- Components ---
 
 export default function App() {
-  const [gameState, setGameState] = useState<'menu' | 'playing' | 'gameOver'>('menu');
+  const [gameState, setGameState] = useState<'menu' | 'loadout' | 'playing' | 'gameOver'>('menu');
   const [difficulty, setDifficulty] = useState<Difficulty>('Normal');
   const [language, setLanguage] = useState<Language>('en');
   const [money, setMoney] = useState(600);
@@ -486,15 +1255,21 @@ export default function App() {
   const [showModConsole, setShowModConsole] = useState(false);
   const [keySequence, setKeySequence] = useState('');
   const [isInfiniteMoney, setIsInfiniteMoney] = useState(false);
+  const [modWaveInput, setModWaveInput] = useState('1');
+  const [modSpawnType, setModSpawnType] = useState<keyof typeof ZOMBIE_TYPES>('NORMAL');
+  const [modSpawnLane, setModSpawnLane] = useState(0);
   const [isPausedUnits, setIsPausedUnits] = useState(false);
   const [isPausedZombies, setIsPausedZombies] = useState(false);
   const [gameStartTime, setGameStartTime] = useState(Date.now());
   const [musicVolume, setMusicVolume] = useState(50);
   const [sfxVolume, setSfxVolume] = useState(50);
-  const [almanacTab, setAlmanacTab] = useState<'zombies' | 'units'>('units');
+  const [almanacTab, setAlmanacTab] = useState<'zombies' | 'units' | 'attributes'>('units');
+  const [bossesIntroduced, setBossesIntroduced] = useState<Record<string, boolean>>({});
+  const introducedTypesRef = useRef<Set<string>>(new Set());
   const [moneyParticles, setMoneyParticles] = useState<{ id: string; x: number; y: number; amount: number }[]>([]);
   const [skyMoney, setSkyMoney] = useState<{ id: string; x: number; y: number; targetY: number; collected: boolean; createdAt: number }[]>([]);
   const [lives, setLives] = useState(100);
+  const [isInfiniteMode, setIsInfiniteMode] = useState(false);
   const [lawnmowers, setLawnmowers] = useState<Lawnmower[]>([]);
   const [showAlmanac, setShowAlmanac] = useState(false);
   const [screenShake, setScreenShake] = useState(0);
@@ -504,6 +1279,10 @@ export default function App() {
   const [showFinalWave, setShowFinalWave] = useState(false);
   const [projectiles, setProjectiles] = useState<Projectile[]>([]);
   const [hits, setHits] = useState<Hit[]>([]);
+  const [gameSpeed, setGameSpeed] = useState(1.0);
+  const gameTimeRef = useRef(Date.now());
+  const [selectedLoadout, setSelectedLoadout] = useState<UnitType[]>([]);
+  const [tempDifficulty, setTempDifficulty] = useState<Difficulty | null>(null);
   const musicRef = useRef<HTMLAudioElement | null>(null);
 
   const t = (key: string) => TRANSLATIONS[language][key] || key;
@@ -511,18 +1290,22 @@ export default function App() {
   const playSFX = useCallback((path: string) => {
     if (sfxVolume <= 0) return;
     try {
-      // Direct creation for maximum compatibility
-      const audio = new Audio(path);
-      audio.volume = sfxVolume / 100;
-      audio.play().catch(err => {
-        // Log errors to help debugging audio issues
-        if (err.name !== 'NotAllowedError') {
-          console.warn(`Audio play failed for ${path}:`, err);
-        }
-      });
-    } catch (e) {
-      console.error("SFX Execution failed:", e);
-    }
+      const isBossPresent = zombies.some(z => z.hasBossAttribute);
+      const fullPath = path.startsWith('/') ? path : `/${path}`;
+      const audio = new Audio(fullPath);
+      audio.volume = (sfxVolume / 100) * (isBossPresent ? 0.3 : 1.0);
+      // Ensure the audio object isn't immediately garbage collected
+      (window as any)[`audio_${Date.now()}_${Math.random()}`] = audio;
+      audio.onended = () => {
+        // Clean up
+        Object.keys(window).forEach(key => {
+          if (key.startsWith('audio_') && (window as any)[key] === audio) {
+            delete (window as any)[key];
+          }
+        });
+      };
+      audio.play().catch(() => {});
+    } catch (e) {}
   }, [sfxVolume]);
 
   useEffect(() => {
@@ -539,8 +1322,25 @@ export default function App() {
       musicRef.current.pause();
     }
     
-    musicRef.current.volume = musicVolume / 100;
-  }, [gameState, isPaused, musicVolume]);
+    const isBossPresent = zombies.some(z => z.hasBossAttribute);
+    musicRef.current.volume = (musicVolume / 100) * (isBossPresent ? 0.5 : 1.0);
+  }, [gameState, isPaused, musicVolume, zombies]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (gameState === 'playing' && !gameOver) {
+          setIsPaused(prev => !prev);
+        } else if (gameState === 'loadout') {
+          setGameState('menu');
+        } else if (showAlmanac) {
+          setShowAlmanac(false);
+        }
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [gameState, gameOver, showAlmanac]);
   
   const gameLoopRef = useRef<number | null>(null);
   const lastTickRef = useRef<number>(Date.now());
@@ -556,74 +1356,141 @@ export default function App() {
 
   const lastSkyMoneyTimeRef = useRef<number>(Date.now());
 
-  const getZombieData = useCallback(() => {
+  const getZombieData = useCallback((forcedType?: keyof typeof ZOMBIE_TYPES, forcedRow?: number) => {
     const config = DIFFICULTY_CONFIG[difficulty];
-    const row = Math.floor(Math.random() * ROWS);
+    const row = forcedRow !== undefined ? forcedRow : Math.floor(Math.random() * ROWS);
     
-    // Pick random type (Normal 60%, Speedy 30%, Tank 10% after wave 10)
-    let typeKey: keyof typeof ZOMBIE_TYPES = 'NORMAL';
-    if (wave >= 10 && Math.random() > 0.8) {
-      typeKey = 'TANK';
-    } else if (wave >= 3 && Math.random() > 0.7) {
-      typeKey = 'SPEEDY';
+    // Pick random type (Normal 60%, Speedy 25%, Slow 15% after wave 5, Hidden after wave 15)
+    let typeKey: keyof typeof ZOMBIE_TYPES = forcedType || 'NORMAL';
+    if (!forcedType) {
+      if (wave >= 10 && Math.random() < 0.05 + (wave * 0.002)) {
+        typeKey = 'NORMAL_BOSS';
+      } else if (wave >= 20 && Math.random() > 0.8) { // Breaker2 starts at wave 20
+        typeKey = 'BREAKER2';
+      } else if (wave >= 15 && Math.random() > 0.8) {
+        typeKey = 'HIDDEN';
+      } else if (wave >= 5 && Math.random() > 0.85) {
+        typeKey = 'SLOW';
+      } else if (wave >= 3 && Math.random() > 0.7) {
+        typeKey = 'SPEEDY';
+      }
     }
     
     const zombieType = ZOMBIE_TYPES[typeKey];
-    const baseHp = zombieType.baseHp * (1 + (wave - 1) * 0.2); // HP scales with wave
+    const baseHp = zombieType.baseHp; 
     
     // speed is in pixels per ms: grid_size / (seconds * 1000)
-    const baseSpeed = (CELL_SIZE / (zombieType.speedPerGrid * 1000)) * (1 + (wave - 1) * 0.05); 
+    let baseSpeed = (CELL_SIZE / (zombieType.speedPerGrid * 1000)); 
+    if (typeKey !== 'NORMAL_BOSS') {
+      // Small speed increase can remain or be disabled too?
+      // The user specifically said HP should stay same. 
+      // I'll disable speed scaling too to be safe/consistent.
+    }
+
     const baseReward = zombieType.reward;
-    const isTank = typeKey === 'TANK' || (wave >= 12 && Math.random() > 0.95);
-    const isBloated = !isTank && wave >= 6 && Math.random() > 0.8;
-    const isLead = wave >= 8 && Math.random() > 0.7; // Lead property
-    const isHidden = wave >= 12 && Math.random() > 0.8;
+    
+    // attributes logic
+    let isTank = false;
+    let isBloated = false;
+    let isNimble = false;
+    let isRegen = false;
+    let isBoss = typeKey === 'NORMAL_BOSS';
+    let hasBossAttribute = false;
+    
+    if (isBoss && !introducedTypesRef.current.has(typeKey)) {
+      hasBossAttribute = true;
+      introducedTypesRef.current.add(typeKey);
+    }
+
+    if (typeKey === 'SPEEDY') {
+      isTank = Math.random() > 0.5 && wave >= 15;
+      isBloated = !isTank && wave >= 12 && Math.random() > 0.8;
+    } else if (typeKey === 'SLOW') {
+      isTank = wave >= 12 && Math.random() > 0.4;
+      isBloated = wave >= 12 && Math.random() > 0.4;
+      isNimble = wave >= 12 && Math.random() > 0.3;
+      isRegen = wave >= 12 && Math.random() > 0.3;
+    } else if (typeKey === 'HIDDEN') {
+      isBloated = Math.random() > 0.6;
+      isNimble = Math.random() > 0.6;
+    } else if (typeKey === 'NORMAL_BOSS') {
+      isBloated = Math.random() > 0.5;
+      isNimble = Math.random() > 0.5;
+    } else if (typeKey === 'BREAKER2') {
+       isBloated = Math.random() > 0.4;
+       isNimble = Math.random() > 0.4;
+    } else if (typeKey === 'BREAKER') {
+       // No attributes for small breaker
+    } else {
+      isBloated = wave >= 12 && Math.random() > 0.8;
+    }
+
+    const isLead = !isBoss && !['HIDDEN', 'BREAKER', 'BREAKER2'].includes(typeKey) && wave >= 20 && Math.random() > 0.7; // Lead property
+    const isHidden = typeKey === 'HIDDEN' || (!isBoss && wave >= 25 && Math.random() > 0.8);
 
     let finalHp = isBloated ? baseHp * 2 : baseHp;
-    if (isTank) finalHp *= 2.5;
+    if (isTank) finalHp *= 2.0; 
+    
+    if (isNimble) baseSpeed *= 2.0;
 
     const newZombie: Zombie = {
       id: Math.random().toString(36).substr(2, 9),
       type: 'zombie',
       name: zombieType.name,
+      zombieType: typeKey,
       x: COLS * CELL_SIZE,
       y: row * CELL_SIZE,
       row,
       hp: finalHp,
       maxHp: finalHp,
+      baseMaxHp: baseHp, // for regen calc
       speed: isTank ? baseSpeed * 0.6 : baseSpeed,
       damage: zombieType.damage,
       isEating: false,
       isBloated,
       isTank,
+      isNimble,
+      isRegen,
+      isBoss,
+      hasBossAttribute,
       isLead,
       isHidden,
       reward: isBloated ? Math.floor(baseReward * 1.5) : baseReward,
       variant: Math.floor(Math.random() * 3),
       isStunned: false,
+      chillAmount: 0,
+      isFrozen: false,
+      frozenUntil: 0,
     };
     return newZombie;
   }, [difficulty, wave]);
 
   const startWave = useCallback((waveNum: number) => {
     const config = DIFFICULTY_CONFIG[difficulty];
-    if (waveNum > config.maxWaves) {
+    if (!isInfiniteMode && waveNum > config.maxWaves) {
       setGameState('gameOver');
       return;
     }
     setWave(waveNum);
-    setZombiesToSpawn(5 + waveNum * 3);
+    const baseCount = 5 + waveNum * 3;
+    const finalCount = isInfiniteMode && waveNum > 50 ? baseCount + (waveNum - 50) * 5 : baseCount;
+    setZombiesToSpawn(finalCount);
     setIsWaveActive(true);
-    if (waveNum === 10) {
+    if (waveNum === 10 || (isInfiniteMode && waveNum % 10 === 0)) {
       setShowFinalWave(true);
       setTimeout(() => setShowFinalWave(false), 5000);
     }
-  }, [difficulty]);
+  }, [difficulty, isInfiniteMode]);
 
   const updateGame = useCallback(() => {
-    const now = Date.now();
-    const deltaTime = now - lastTickRef.current;
-    lastTickRef.current = now;
+    const realNow = Date.now();
+    const realDelta = realNow - lastTickRef.current;
+    lastTickRef.current = realNow;
+    
+    // Scale delta by game speed
+    const scaledDelta = realDelta * gameSpeed;
+    gameTimeRef.current += scaledDelta;
+    const now = gameTimeRef.current;
 
     if (isPaused || showModConsole || gameOver || gameState !== 'playing') {
       gameLoopRef.current = requestAnimationFrame(updateGame);
@@ -685,16 +1552,22 @@ export default function App() {
         if (unit.unitType === 'scout') {
           const config = SCOUT_LEVELS[unit.level];
           if (now - (unit.lastAttackTime || 0) >= config.interval) {
-            const target = nextZombies.find(z => 
-              z.row === unit.row && 
-              z.x > unit.x && 
-              z.hp > 0 && 
-              (!z.isHidden || config.hasHiddenDetection)
-            );
+            // Find leftmost zombie (closest to farm) in row
+            const target = nextZombies
+              .filter(z => 
+                z.row === unit.row && 
+                z.x > unit.x && 
+                z.hp > 0 && 
+                (!z.isHidden || config.hasHiddenDetection)
+              )
+              .sort((a, b) => a.x - b.x)[0];
 
             if (target) {
+              // Removed decimals when taking damage as per requirement
+              const currentHp = Math.floor(target.hp);
               const damage = (target.isTank && !config.hasLeadDetection) ? 1 : config.damage;
-              target.hp -= damage;
+              target.hp = currentHp - damage;
+              unit.totalDamageDealt = (unit.totalDamageDealt || 0) + damage;
               
               // Spawning projectile visual
               const projId = Math.random().toString(36).substr(2, 9);
@@ -723,10 +1596,12 @@ export default function App() {
                 color: '#e74c3c'
               }]);
 
-              // Scout weapons sound: L0-2 = ScoutFire2, L3-4 = ScoutFire1
-              const fireSound = unit.level <= 2 ? '/Scout/Sound/ScoutFire2.ogg' : '/Scout/Sound/ScoutFire1.ogg';
+              // Scout weapons sound
+              const fireSound = unit.level <= 2 ? '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/SoldierFire0.ogg' : '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/SoldierFire1.ogg';
               playSFX(fireSound);
-              return { ...unit, lastAttackTime: now };
+              setTimeout(() => playSFX(fireSound), 50);
+
+              return { ...unit, lastAttackTime: now, targetId: target.id };
             }
           }
         }
@@ -738,14 +1613,17 @@ export default function App() {
         if (unit.unitType === 'sniper') {
           const config = SNIPER_LEVELS[unit.level];
           if (now - (unit.lastAttackTime || 0) >= config.interval) {
-            // Target ANY row, prioritize closest to end (lowest x)
+            // Priority: Closest to house (leftmost) - No locking as per user request
             const target = nextZombies
-              .filter(z => z.hp > 0 && (!z.isHidden || config.hasHiddenDetection))
-              .sort((a,b) => a.x - b.x)[0];
+                .filter(z => z.hp > 0 && (!z.isHidden || config.hasHiddenDetection))
+                .sort((a,b) => a.x - b.x)[0];
 
             if (target) {
+              // Removed decimals when taking damage
+              const currentHp = Math.floor(target.hp);
               const damage = (target.isTank && !config.hasLeadDetection) ? 1 : config.damage;
-              target.hp -= damage;
+              target.hp = currentHp - damage;
+              unit.totalDamageDealt = (unit.totalDamageDealt || 0) + damage;
 
               // Spawning projectile visual
               const projId = Math.random().toString(36).substr(2, 9);
@@ -785,17 +1663,519 @@ export default function App() {
                 playSFX('/Sniper/Sound/Sniper_Reload.ogg');
               }, 750);
 
-              return { ...unit, lastAttackTime: now };
+              return { ...unit, lastAttackTime: now, targetId: target.id };
             }
           }
         }
         return unit;
       });
 
+      // 1.3 Paintballer Combat
+      nextUnits = nextUnits.map(unit => {
+        if (unit.unitType === 'paintballer') {
+          const config = PAINTBALLER_LEVELS[unit.level];
+          if (now - (unit.lastAttackTime || 0) >= config.interval) {
+            const target = nextZombies
+              .filter(z => 
+                z.row === unit.row && 
+                z.x > unit.x && 
+                z.hp > 0 && 
+                (!z.isHidden || (config as any).hasHiddenDetection)
+              )
+              .sort((a, b) => a.x - b.x)[0];
+
+            if (target) {
+              const splashRangePx = (config as any).splashRange * CELL_SIZE;
+              // Splash damage to all zombies in range on same row
+              nextZombies.forEach(z => {
+                if (z.row === target!.row && Math.abs(z.x - target!.x) <= splashRangePx && z.hp > 0 && (!z.isHidden || (config as any).hasHiddenDetection)) {
+                  const damage = (z.isTank && !(config as any).hasLeadDetection) ? 1 : config.damage;
+                  z.hp = Math.floor(z.hp) - damage;
+                  unit.totalDamageDealt = (unit.totalDamageDealt || 0) + damage;
+                }
+              });
+
+              // Spawning projectile visual
+              const projId = Math.random().toString(36).substr(2, 9);
+              const projX = unit.x + 50;
+              const projY = unit.y + 30;
+              const angle = Math.atan2((target.y + 40) - projY, target.x - projX) * 180 / Math.PI;
+
+              setProjectiles(prev => [...prev, {
+                id: projId,
+                x: projX,
+                y: projY,
+                targetX: target.x,
+                targetY: target.y + 40,
+                type: 'paintball',
+                color: '#e74c3c',
+                rotation: angle
+              }]);
+
+              setHits(prev => [...prev, {
+                id: Math.random().toString(36).substr(2, 9),
+                x: target!.x + 20,
+                y: target!.y + 20,
+                createdAt: now,
+                color: '#e74c3c'
+              }]);
+
+              playSFX('/PaintBALLER/Sound/PaintballerFire.ogg');
+              return { ...unit, lastAttackTime: now, targetId: target.id };
+            }
+          }
+        }
+        return unit;
+      });
+
+      // 1.4 Demoman Combat
+      nextUnits = nextUnits.map(unit => {
+        if (unit.unitType === 'demoman') {
+          const config = DEMOMAN_LEVELS[unit.level];
+          if (now - (unit.lastAttackTime || 0) >= config.interval) {
+            const target = nextZombies
+              .filter(z => 
+                z.row === unit.row && 
+                z.x > unit.x && 
+                z.hp > 0 && 
+                (!z.isHidden || (config as any).hasHiddenDetection)
+              )
+              .sort((a, b) => a.x - b.x)[0];
+
+            if (target) {
+              const splashRangePx = (config as any).splashRange * CELL_SIZE;
+              // Splash damage
+              nextZombies.forEach(z => {
+                if (z.row === target!.row && Math.abs(z.x - target!.x) <= splashRangePx && z.hp > 0 && (!z.isHidden || (config as any).hasHiddenDetection)) {
+                  const damage = (z.isTank && !(config as any).hasLeadDetection) ? 1 : config.damage;
+                  z.hp = Math.floor(z.hp) - damage;
+                  unit.totalDamageDealt = (unit.totalDamageDealt || 0) + damage;
+                }
+              });
+
+              // Projectile
+              const projId = Math.random().toString(36).substr(2, 9);
+              const projX = unit.x + 50;
+              const projY = unit.y + 30;
+              const angle = Math.atan2((target.y + 40) - projY, target.x - projX) * 180 / Math.PI;
+
+              setProjectiles(prev => [...prev, {
+                id: projId,
+                x: projX,
+                y: projY,
+                targetX: target.x,
+                targetY: target.y + 40,
+                type: 'paintball',
+                color: '#000000',
+                rotation: angle,
+                duration: config.level >= 3 ? 0.15 : 0.25 // Faster Projectile at level 3+
+              }]);
+
+              setHits(prev => [...prev, {
+                id: Math.random().toString(36).substr(2, 9),
+                x: target!.x + 20,
+                y: target!.y + 20,
+                createdAt: now,
+                color: '#ff4d00'
+              }]);
+
+              const fireSound = unit.level <= 2 ? '/Sniper/Sound/Demoman/Sound/DemomanFire0.ogg' : '/Sniper/Sound/Demoman/Sound/DemomanFire1.ogg';
+              playSFX(fireSound);
+              // Adding "echo" by playing again with slight delay for level 3-4 (index 3 and 4)
+              if (unit.level >= 3) {
+                setTimeout(() => playSFX(fireSound), 60);
+              }
+              if (unit.level >= 3) {
+                setTimeout(() => playSFX('/Sniper/Sound/Demoman/Sound/DemomanFireReload.ogg'), 600);
+              }
+              return { ...unit, lastAttackTime: now, targetId: target.id };
+            }
+          }
+        }
+        return unit;
+      });
+
+      // 1.5 Soldier Combat
+      nextUnits = nextUnits.map(unit => {
+        if (unit.unitType === 'soldier') {
+          const config = SOLDIER_LEVELS[unit.level];
+          const isBursting = (unit.burstRemaining || 0) > 0;
+          const currentInterval = isBursting ? config.interval : config.cooldown;
+          
+          if (now - (unit.lastAttackTime || 0) >= currentInterval) {
+            const target = nextZombies
+              .filter(z => 
+                z.row === unit.row && 
+                z.x > unit.x && 
+                z.hp > 0 && 
+                (!z.isHidden || config.hasHiddenDetection) &&
+                (!z.isFlying || config.hasFlyingDetection)
+              )
+              .sort((a, b) => a.x - b.x)[0];
+
+            if (target) {
+              const damage = (target.isTank) ? 1 : config.damage;
+              target.hp -= damage;
+              unit.totalDamageDealt = (unit.totalDamageDealt || 0) + damage;
+
+              const projId = Math.random().toString(36).substr(2, 9);
+              const projX = unit.x + 50;
+              const projY = unit.y + 30;
+              const angle = Math.atan2((target.y + 40) - projY, target.x - projX) * 180 / Math.PI;
+
+              setProjectiles(prev => [...prev, {
+                id: projId,
+                x: projX,
+                y: projY,
+                targetX: target.x,
+                targetY: target.y + 40,
+                type: 'bullet',
+                color: '#f1c40f',
+                rotation: angle
+              }]);
+
+              setHits(prev => [...prev, {
+                id: Math.random().toString(36).substr(2, 9),
+                x: target!.x + 20,
+                y: target!.y + 20,
+                createdAt: now,
+                color: '#f1c40f'
+              }]);
+
+              const shootSound = unit.level <= 2 ? '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/SoldierFire0.ogg' : 
+                                 '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/SoldierFire1.ogg';
+              playSFX(shootSound);
+              // Echo for soldier too
+              setTimeout(() => playSFX(shootSound), 40);
+              
+              let nextBurstCount = unit.burstRemaining || 0;
+              if (nextBurstCount === 0) {
+                nextBurstCount = config.burstCount - 1;
+              } else {
+                nextBurstCount -= 1;
+              }
+
+              return { 
+                ...unit, 
+                lastAttackTime: now, 
+                targetId: target.id, 
+                burstRemaining: nextBurstCount 
+              };
+            }
+          }
+        }
+
+        // 1.6 Shotgunner Combat
+        if (unit.unitType === 'shotgunner') {
+          const config = SHOTGUNNER_LEVELS[unit.level];
+          if (now - (unit.lastAttackTime || 0) >= config.interval) {
+            const primaryTarget = nextZombies.find(z => 
+              z.hp > 0 && 
+              z.row === unit.row &&
+              z.x > unit.x &&
+              z.x < unit.x + config.range &&
+              (!z.isHidden || config.hasHiddenDetection)
+            );
+
+            if (primaryTarget) {
+              const unitCenterX = unit.x + 50;
+              const unitCenterY = unit.y + 50;
+              const spreadRad = (config.spread * Math.PI) / 180;
+              
+              // Simulate pellets
+              for (let i = 0; i < config.bullets; i++) {
+                const offAngle = (Math.random() - 0.5) * spreadRad;
+                
+                nextZombies = nextZombies.map(zombie => {
+                  if (zombie.hp <= 0) return zombie;
+                  
+                  const zX = zombie.x + 50;
+                  const zY = zombie.y + 50;
+                  const dx = zX - unitCenterX;
+                  const dy = zY - unitCenterY;
+                  const dist = Math.sqrt(dx*dx + dy*dy);
+                  
+                  const rangeMult = 0.7 + 0.3 * Math.cos(offAngle * (Math.PI / spreadRad));
+                  if (dist > config.range * rangeMult) return zombie;
+
+                  const zAngle = Math.atan2(dy, dx);
+                  let diff = zAngle - 0; // Standard right direction
+                  while (diff > Math.PI) diff -= Math.PI * 2;
+                  while (diff < -Math.PI) diff += Math.PI * 2;
+
+                  // Projectile collision simulation
+                  const crossProd = Math.abs(dx * Math.sin(offAngle) - dy * Math.cos(offAngle));
+                  if (crossProd < 45 && dx > 0) {
+                     // Rules: 
+                     // 1. Lead needs detection always.
+                     // 2. Hidden/Flying can be hit indirectly (if not primary target) or if detected.
+                     const detectionMatch = (!zombie.isLead || config.hasLeadDetection) &&
+                                            (!zombie.isHidden || config.hasHiddenDetection);
+                     
+                     const isIndirectHit = zombie.id !== primaryTarget.id;
+                     const canHitIndirectly = !zombie.isLead || config.hasLeadDetection; // Can't skip lead even if indirect
+
+                     if (detectionMatch || (isIndirectHit && canHitIndirectly)) {
+                        const dmg = (zombie.isTank) ? 1 : config.damage;
+                        zombie.hp -= dmg;
+                        unit.totalDamageDealt = (unit.totalDamageDealt || 0) + dmg;
+                     }
+                  }
+                  return zombie;
+                });
+
+                setProjectiles(prev => [...prev, {
+                  id: Math.random().toString(36).substr(2, 9),
+                  x: unitCenterX,
+                  y: unitCenterY,
+                  targetX: unitCenterX + config.range * Math.cos(offAngle),
+                  targetY: unitCenterY + config.range * Math.sin(offAngle),
+                  type: 'bullet',
+                  color: '#FFD700',
+                  rotation: offAngle * 180 / Math.PI,
+                  duration: 0.15
+                }]);
+              }
+
+              playSFX('/Sniper/Sound/Demoman/Sound/DemomanFire0.ogg');
+              return { ...unit, lastAttackTime: now };
+            }
+          }
+        }
+
+        // 1.7 Freezer Combat
+        if (unit.unitType === 'freezer') {
+          const config = FREEZER_LEVELS[unit.level];
+          const isBursting = (unit.burstRemaining || 0) > 0;
+          const currentInterval = isBursting ? config.interval : (config.cooldown || config.interval);
+          
+          if (now - (unit.lastAttackTime || 0) >= currentInterval) {
+            const target = nextZombies
+              .filter(z => 
+                z.row === unit.row && 
+                z.x > unit.x && 
+                z.hp > 0 && 
+                (!z.isHidden || config.hasHiddenDetection)
+              )
+              .sort((a, b) => a.x - b.x)[0];
+
+            if (target) {
+              const damage = (target.isTank) ? 1 : config.damage;
+              target.hp -= damage;
+              unit.totalDamageDealt = (unit.totalDamageDealt || 0) + damage;
+              
+              target.chillAmount = Math.min(1, (target.chillAmount || 0) + (config.slowPerShot || 0.1));
+              (target as any).slowCap = config.maxSlow;
+              
+              if ((config as any).freezeDuration && target.chillAmount >= 1 && !target.isFrozen) {
+                 target.isFrozen = true;
+                 target.frozenUntil = now + (config as any).freezeDuration;
+              }
+              
+              if ((config as any).defenseReduction) {
+                 target.defenseReduc = (config as any).defenseReduction;
+              }
+
+              const projId = Math.random().toString(36).substr(2, 9);
+              const projX = unit.x + 50;
+              const projY = unit.y + 30;
+              const angle = Math.atan2((target.y + 40) - projY, target.x - projX) * 180 / Math.PI;
+
+              setProjectiles(prev => [...prev, {
+                id: projId,
+                x: projX,
+                y: projY,
+                targetX: target.x,
+                targetY: target.y + 40,
+                type: 'dart',
+                color: '#3498db',
+                rotation: angle
+              }]);
+
+              setHits(prev => [...prev, {
+                id: Math.random().toString(36).substr(2, 9),
+                x: target!.x + 20,
+                y: target!.y + 20,
+                createdAt: now,
+                color: '#3498db'
+              }]);
+
+              playSFX('/PaintBALLER/Sound/PaintballerFire.ogg');
+              
+              let nextBurstCount = unit.burstRemaining || 0;
+              if (config.burstCount) {
+                if (nextBurstCount === 0) {
+                  nextBurstCount = config.burstCount - 1;
+                } else {
+                  nextBurstCount -= 1;
+                }
+              }
+
+              return { 
+                ...unit, 
+                lastAttackTime: now, 
+                targetId: target.id, 
+                burstRemaining: nextBurstCount 
+              };
+            }
+          }
+        }
+
+        // 1.8 Assassin Combat
+        if (unit.unitType === 'assassin') {
+          const config = ASSASSIN_LEVELS[unit.level] as any;
+          if (now - (unit.lastAttackTime || 0) >= config.interval) {
+            const rangePx = (config.range || 5) * CELL_SIZE;
+            const target = nextZombies
+              .filter(z => 
+                z.row === unit.row && 
+                z.x > unit.x && 
+                z.x < unit.x + rangePx && 
+                z.hp > 0 && 
+                (!z.isHidden || config.hasHiddenDetection)
+              )
+              .sort((a,b) => a.x - b.x)[0];
+              
+            if (target) {
+              const damage = (target.isTank && !config.hasLeadDetection) ? 1 : config.damage;
+              target.hp -= damage;
+              unit.totalDamageDealt = (unit.totalDamageDealt || 0) + damage;
+              unit.damageSinceLastFan = (unit.damageSinceLastFan || 0) + damage;
+              unit.slashCount = (unit.slashCount || 0) + 1;
+              
+              // Spawning hit visual
+              setHits(prev => [...prev, {
+                id: Math.random().toString(36).substr(2, 9),
+                x: target.x + 20,
+                y: target.y + 20,
+                createdAt: now,
+                color: '#e74c3c'
+              }]);
+              
+              // Assassin sound (Metallic click/slash)
+              playSFX('/Sniper/Sound/Sniper_Reload.ogg'); 
+              
+              // Whirlwind logic
+              if (config.hasWhirlwind && unit.slashCount % 3 === 0) {
+                 playSFX('/Sniper/Sound/Demoman/Sound/DemomanFire1.ogg'); // High impact Area sound
+                 const whirangePx = config.whirlwindRange * CELL_SIZE;
+                 nextZombies.forEach(z => {
+                   const dx = z.x - unit.x;
+                   const dy = z.y - unit.y;
+                   const dist = Math.sqrt(dx * dx + dy * dy);
+                   if (dist <= whirangePx && z.hp > 0 && (!z.isHidden || config.hasHiddenDetection)) {
+                      const wDmg = (z.isTank && !config.hasLeadDetection) ? 1 : config.whirlwindDamage;
+                      z.hp -= wDmg;
+                      unit.totalDamageDealt += wDmg;
+                      unit.damageSinceLastFan! += wDmg;
+                   }
+                 });
+                 // ADD GREEN CIRCLE ANIMATION
+                 const hitId = Math.random().toString(36).substr(2, 9);
+                 setHits(prev => [...prev, {
+                   id: hitId,
+                   x: unit.x + 50,
+                   y: unit.y + 50,
+                   createdAt: now,
+                   color: '#2ecc71',
+                   type: 'whirlwind'
+                 }]);
+              }
+              
+              // Fan of Knives logic
+              if (config.hasFan && (unit.damageSinceLastFan || 0) >= config.fanThreshold) {
+                 unit.damageSinceLastFan = 0;
+                 const fanTargets = nextZombies
+                    .filter(z => z.hp > 0 && z.x > unit.x && z.x < unit.x + config.fanRange * CELL_SIZE && (!z.isHidden || config.hasHiddenDetection))
+                    .sort((a,b) => a.x - b.x)
+                    .slice(0, 5); // Target up to 5 zombies
+                 
+                 fanTargets.forEach((z, idx) => {
+                    const fDmg = (z.isTank && !config.hasLeadDetection) ? 1 : config.fanDamage;
+                    z.hp -= fDmg;
+                    unit.totalDamageDealt += fDmg;
+
+                    // ADD KNIFE PROJECTILE ANIMATION
+                    if (idx === 0) playSFX('/PaintBALLER/Sound/PaintballerFire.ogg');
+                    const dx = z.x - unit.x;
+                    const dy = z.y - unit.y;
+                    const rotation = Math.atan2(dy, dx) * (180 / Math.PI);
+
+                    setProjectiles(prev => [...prev, {
+                       id: Math.random().toString(36).substr(2, 9),
+                       x: unit.x + 50,
+                       y: unit.y + 50,
+                       targetX: z.x + 30,
+                       targetY: z.y + 40,
+                       type: 'knife',
+                       color: '#bdc3c7',
+                       rotation: rotation,
+                       duration: 0.3 + (idx * 0.05) // Staggered knives
+                    }]);
+                 });
+              }
+
+              return { ...unit, lastAttackTime: now, targetId: target.id };
+            }
+          }
+        }
+
+        // 1.9 Militant Combat
+        if (unit.unitType === 'militant') {
+          const config = MILITANT_LEVELS[unit.level];
+          if (now - (unit.lastAttackTime || 0) >= config.interval) {
+            const target = nextZombies
+              .filter(z => 
+                z.row === unit.row && 
+                z.x > unit.x && 
+                z.hp > 0 && 
+                (!z.isHidden || config.hasHiddenDetection) &&
+                (!z.isFlying || config.hasFlyingDetection)
+              )
+              .sort((a, b) => a.x - b.x)[0];
+
+            if (target) {
+              const damage = (target.isTank) ? 1 : config.damage;
+              target.hp -= damage;
+              unit.totalDamageDealt = (unit.totalDamageDealt || 0) + damage;
+
+              const projId = Math.random().toString(36).substr(2, 9);
+              const projX = unit.x + 70; // Weapon muzzle offset
+              const projY = unit.y + 40;
+              const angle = Math.atan2((target.y + 40) - projY, target.x - projX) * 180 / Math.PI;
+
+              setProjectiles(prev => [...prev, {
+                id: projId,
+                x: projX,
+                y: projY,
+                targetX: target.x,
+                targetY: target.y + 40,
+                type: 'bullet',
+                color: '#f1c40f',
+                rotation: angle,
+                duration: 0.2
+              }]);
+
+              setHits(prev => [...prev, {
+                id: Math.random().toString(36).substr(2, 9),
+                x: target.x + 20,
+                y: target.y + 20,
+                createdAt: now,
+                color: '#f1c40f'
+              }]);
+
+              return { ...unit, lastAttackTime: now, targetId: target.id };
+            }
+          }
+        }
+
+        return unit;
+      });
+
       if (spawnSound) playSFX('/Farm/Upgrade/Sounds/FarmCash.ogg');
 
       // Cleanup effects
-      setHits(prev => prev.filter(h => now - h.createdAt < 200));
+      setHits(prev => prev.filter(h => now - h.createdAt < 600));
     }
 
     // 1.5 Lawnmower Movement
@@ -817,21 +2197,36 @@ export default function App() {
       return mower;
     });
 
-    // 2. Zombie Movement & Combat
-    if (!isPausedZombies) {
-      const unitDamageMap = new Map<string, number>();
-      const processedZombies: Zombie[] = [];
+      // 2. Zombie Movement & Combat
+      if (!isPausedZombies) {
+        const unitDamageMap = new Map<string, number>();
+        const processedZombies: Zombie[] = [];
 
-      nextZombies.forEach(zombie => {
-        // Handle rewards for dead zombies
-        if (zombie.hp <= 0) {
-          const configDifficulty = DIFFICULTY_CONFIG[difficulty];
-          totalMoneyDelta += Math.floor(zombie.reward * configDifficulty.moneyMult);
-          return;
-        }
+        nextZombies.forEach(zombie => {
+          // Handle rewards for dead zombies
+          if (zombie.hp <= 0) {
+            const configDifficulty = DIFFICULTY_CONFIG[difficulty];
+            totalMoneyDelta += Math.floor(zombie.reward * configDifficulty.moneyMult);
 
-        let isBlocked = false;
-        let targetUnitId: string | null = null;
+            if (zombie.zombieType === 'BREAKER2') {
+               const breaker = getZombieData('BREAKER', zombie.row);
+               breaker.x = zombie.x;
+               processedZombies.push(breaker);
+            }
+            return;
+          }
+
+          // Handle Health Regen
+          let updatedHp = zombie.hp;
+          let lastRegenTime = zombie.lastRegenTime || now;
+          if (zombie.isRegen && now - lastRegenTime >= 2000) {
+            const regenAmount = zombie.baseMaxHp * 0.02;
+            updatedHp = Math.min(zombie.maxHp, updatedHp + regenAmount);
+            lastRegenTime = now;
+          }
+
+          let isBlocked = false;
+          let targetUnitId: string | null = null;
 
         // Collision check
         if (!zombie.isStunned) {
@@ -851,33 +2246,51 @@ export default function App() {
           if (!isPausedUnits) {
             unitDamageMap.set(targetUnitId, (unitDamageMap.get(targetUnitId) || 0) + zombie.damage);
           }
-          processedZombies.push({ ...zombie, isEating: true });
-        } else if (!zombie.isStunned) {
-          const movement = zombie.speed * deltaTime;
-          const nextX = zombie.x - movement;
-          
-          const mower = nextLawnmowers.find(m => m.row === zombie.row && !m.isTriggered && !m.isDone);
-          if (nextX < 20 && mower) {
-            nextLawnmowers = nextLawnmowers.map(m => m.id === mower.id ? { ...m, isTriggered: true } : m);
-            // Skip this zombie for now, it will be handled by mower next frame or die
-            processedZombies.push({ ...zombie, x: nextX });
-            return;
+          processedZombies.push({ ...zombie, hp: updatedHp, lastRegenTime, isEating: true });
+        } else {
+          // Slow/Freeze Logic
+          let moveSpeedMult = 1.0;
+          if (zombie.isFrozen && now < zombie.frozenUntil) {
+            moveSpeedMult = 0;
+          } else {
+            if (zombie.isFrozen) {
+              zombie.isFrozen = false;
+              zombie.chillAmount = 0;
+            }
+            if (zombie.chillAmount > 0) {
+              const sc = (zombie as any).slowCap || 0.5;
+              moveSpeedMult = (1 - (zombie.chillAmount * sc));
+            }
           }
 
-          if (nextX < -50) {
-            setLives(prev => {
-              const damageTaken = Math.ceil(zombie.hp);
-              const nextLives = prev - damageTaken;
-              if (nextLives <= 0) setGameOver(true);
-              setScreenShake(10);
-              setTimeout(() => setScreenShake(0), 500);
-              return Math.max(0, nextLives);
-            });
-            return;
+          if (!zombie.isStunned || zombie.hasBossAttribute) {
+            const movement = (zombie.isStunned && zombie.hasBossAttribute) 
+              ? (zombie.speed * moveSpeedMult * scaledDelta * 0.3) 
+              : (zombie.speed * moveSpeedMult * scaledDelta);
+            const nextX = zombie.x - movement;
+            
+            const mower = nextLawnmowers.find(m => m.row === zombie.row && !m.isTriggered && !m.isDone);
+            if (nextX < 20 && mower) {
+              nextLawnmowers = nextLawnmowers.map(m => m.id === mower.id ? { ...m, isTriggered: true } : m);
+              processedZombies.push({ ...zombie, hp: updatedHp, lastRegenTime, x: nextX });
+              return;
+            }
+
+            if (nextX < -50) {
+              setLives(prev => {
+                const damageTaken = Math.ceil(updatedHp);
+                const nextLives = prev - damageTaken;
+                if (nextLives <= 0) setGameOver(true);
+                setScreenShake(10);
+                setTimeout(() => setScreenShake(0), 500);
+                return Math.max(0, nextLives);
+              });
+              return;
+            }
+            processedZombies.push({ ...zombie, hp: updatedHp, lastRegenTime, x: nextX, isEating: false });
+          } else {
+            processedZombies.push({ ...zombie, hp: updatedHp, lastRegenTime, isEating: false });
           }
-          processedZombies.push({ ...zombie, x: nextX, isEating: false });
-        } else {
-          processedZombies.push({ ...zombie, isEating: false });
         }
       });
 
@@ -900,7 +2313,7 @@ export default function App() {
       const config = DIFFICULTY_CONFIG[difficulty];
       
       if (zombiesToSpawn > 0) {
-        spawnTimerRef.current += deltaTime;
+        spawnTimerRef.current += scaledDelta;
         if (spawnTimerRef.current > (5000 / wave) * config.spawnRateMult) { 
           const newZ = getZombieData();
           nextZombies.push(newZ);
@@ -909,7 +2322,7 @@ export default function App() {
         }
       } else if (nextZombies.length === 0 && isWaveActive) {
         setIsWaveActive(false);
-        if (wave < config.maxWaves) {
+        if (isInfiniteMode || wave < config.maxWaves) {
           setTimeout(() => startWave(wave + 1), 3000);
         } else {
           setGameState('gameOver');
@@ -962,66 +2375,32 @@ export default function App() {
       return;
     }
 
-    if (selectedSeed === 'farm') {
-      const cost = Math.floor(FARM_LEVELS[0].cost);
-      if (isInfiniteMoney || money >= cost) {
-        const newUnit: Unit = {
-          id: Math.random().toString(36).substr(2, 9),
-          type: 'farm',
-          unitType: 'farm',
-          x: col * CELL_SIZE,
-          y: row * CELL_SIZE,
-          row,
-          hp: FARM_LEVELS[0].hp,
-          maxHp: FARM_LEVELS[0].hp,
-          level: 0,
-          lastProductionTime: Date.now(),
-          isStunImmune: true,
-        };
-        setUnits(prev => [...prev, newUnit]);
-        if (!isInfiniteMoney) setMoney(prev => Math.max(0, prev - cost));
-        setSelectedSeed(null);
-      }
-    } else if (selectedSeed === 'scout') {
-      const cost = Math.floor(SCOUT_LEVELS[0].cost);
-      if (isInfiniteMoney || money >= cost) {
-        const newUnit: Unit = {
-          id: Math.random().toString(36).substr(2, 9),
-          type: 'farm',
-          unitType: 'scout',
-          x: col * CELL_SIZE,
-          y: row * CELL_SIZE,
-          row,
-          hp: SCOUT_LEVELS[0].hp,
-          maxHp: SCOUT_LEVELS[0].hp,
-          level: 0,
-          lastAttackTime: Date.now(),
-          isStunImmune: false,
-        };
-        setUnits(prev => [...prev, newUnit]);
-        if (!isInfiniteMoney) setMoney(prev => Math.max(0, prev - cost));
-        setSelectedSeed(null);
-      }
-    } else if (selectedSeed === 'sniper') {
-      const cost = Math.floor(SNIPER_LEVELS[0].cost);
-      if (isInfiniteMoney || money >= cost) {
-        const newUnit: Unit = {
-          id: Math.random().toString(36).substr(2, 9),
-          type: 'farm', // This internal type 'farm' seems to be used loosely for grid units
-          unitType: 'sniper',
-          x: col * CELL_SIZE,
-          y: row * CELL_SIZE,
-          row,
-          hp: SNIPER_LEVELS[0].hp,
-          maxHp: SNIPER_LEVELS[0].hp,
-          level: 0,
-          lastAttackTime: Date.now(),
-          isStunImmune: true, // Sniper is stun immune per user request
-        };
-        setUnits(prev => [...prev, newUnit]);
-        if (!isInfiniteMoney) setMoney(prev => Math.max(0, prev - cost));
-        setSelectedSeed(null);
-      }
+    if (!selectedSeed) return;
+
+    const ut = selectedSeed as UnitType;
+    const levels = getLevels(ut);
+    
+    const cost = Math.floor(levels[0].cost);
+    if (isInfiniteMoney || money >= cost) {
+      const newUnit: Unit = {
+        id: Math.random().toString(36).substr(2, 9),
+        type: ut, // matched UnitType to EntityType in BaseEntity correctly
+        unitType: ut,
+        x: col * CELL_SIZE,
+        y: row * CELL_SIZE,
+        row,
+        hp: levels[0].hp,
+        maxHp: levels[0].hp,
+        level: 0,
+        lastAttackTime: Date.now(),
+        lastProductionTime: ut === 'farm' ? Date.now() : undefined,
+        isStunImmune: ut === 'sniper' || ut === 'farm' || ut === 'demoman',
+        totalDamageDealt: 0,
+        burstRemaining: 0
+      };
+      setUnits(prev => [...prev, newUnit]);
+      if (!isInfiniteMoney) setMoney(prev => Math.max(0, prev - cost));
+      setSelectedSeed(null);
     }
     setSelectedUnitId(null);
   };
@@ -1030,7 +2409,8 @@ export default function App() {
     const unit = units.find(u => u.id === unitId);
     if (!unit) return;
 
-    const levels = unit.unitType === 'farm' ? FARM_LEVELS : unit.unitType === 'scout' ? SCOUT_LEVELS : SNIPER_LEVELS;
+    const levels = getLevels(unit.unitType);
+    
     if (unit.level >= levels.length - 1) return;
 
     const currentConfig = levels[unit.level];
@@ -1046,6 +2426,7 @@ export default function App() {
             level: u.level + 1,
             hp: nextConfig.hp,
             maxHp: nextConfig.hp,
+            isStunImmune: u.isStunImmune || (u.unitType === 'freezer' && u.level + 1 >= 3), // Example immunity
           };
         }
         return u;
@@ -1057,7 +2438,7 @@ export default function App() {
   const handleSell = (unitId: string) => {
     const unit = units.find(u => u.id === unitId);
     if (unit) {
-      const levels = unit.unitType === 'farm' ? FARM_LEVELS : unit.unitType === 'scout' ? SCOUT_LEVELS : SNIPER_LEVELS;
+      const levels = getLevels(unit.unitType);
       const sellPrice = Math.floor(levels[unit.level].sellPrice);
       setMoney(prev => prev + sellPrice);
       setUnits(prev => prev.filter(u => u.id !== unitId));
@@ -1066,7 +2447,20 @@ export default function App() {
   };
 
   const startGame = (diff: Difficulty) => {
+    // Resume audio context if the browser suspended it
+    if (typeof window !== 'undefined' && (window as any).AudioContext) {
+      const ctx = new ((window as any).AudioContext || (window as any).webkitAudioContext)();
+      if (ctx.state === 'suspended') ctx.resume();
+    }
     setDifficulty(diff);
+    setTempDifficulty(diff);
+    setIsInfiniteMode(diff === 'Infinite');
+    setGameState('loadout');
+  };
+
+  const confirmLoadout = () => {
+    if (!tempDifficulty) return;
+    const diff = tempDifficulty;
     setGameState('playing');
     setMoney(DIFFICULTY_CONFIG[diff].startingMoney);
     setUnits([]);
@@ -1084,18 +2478,25 @@ export default function App() {
     lastSkyMoneyTimeRef.current = Date.now();
     setGameStartTime(Date.now());
     
-    // Initialize Lawnmowers
     const mowers: Lawnmower[] = Array.from({ length: ROWS }).map((_, i) => ({
       id: `mower-${i}`,
       row: i,
-      x: -40, // Off-screen slightly to the left
+      x: -40,
       isTriggered: false,
       isDone: false
     }));
     setLawnmowers(mowers);
-    
-    // Start first wave
     setTimeout(() => startWave(1), 1000);
+  };
+
+  const toggleUnitInLoadout = (ut: UnitType) => {
+    setSelectedLoadout(prev => {
+      if (prev.includes(ut)) {
+        return prev.filter(u => u !== ut);
+      }
+      if (prev.length >= 5) return prev;
+      return [...prev, ut];
+    });
   };
 
   const resetGame = () => {
@@ -1109,6 +2510,74 @@ export default function App() {
     setSelectedSeed(null);
     setSelectedUnitId(null);
     spawnTimerRef.current = 0;
+  };
+
+  const useAbility = (unitId: string, abilityName: string) => {
+    const unit = units.find(u => u.id === unitId);
+    if (!unit) return;
+    const now = gameTimeRef.current;
+    const cooldowns = unit.abilityCooldowns || {};
+    if (cooldowns[abilityName] && now < cooldowns[abilityName]) return;
+
+    if (abilityName === 'Frost Grenade') {
+      const targetZombies = zombies
+        .filter(z => z.hp > 0 && z.row === unit.row)
+        .sort((a, b) => a.x - b.x)
+        .slice(0, 5);
+
+      if (targetZombies.length === 0) return;
+
+      setUnits(prev => prev.map(u => u.id === unitId ? {
+        ...u,
+        abilityCooldowns: { ...cooldowns, [abilityName]: now + 15000 }
+      } : u));
+      
+      playSFX('/Sniper/Sound/Demoman/Sound/DemomanFire0.ogg');
+      
+      // Spawn Grenade Projectile
+      const targetX = targetZombies[0].x;
+      const targetY = targetZombies[0].y + 40;
+      
+      setProjectiles(prev => [...prev, {
+        id: Math.random().toString(36).substr(2, 9),
+        x: unit.x + 50,
+        y: unit.y + 30,
+        targetX: targetX,
+        targetY: targetY,
+        type: 'grenade',
+        color: '#3498db',
+        rotation: 0,
+        duration: 0.8
+      }]);
+
+      // Delay hit to match projectile arrival
+      setTimeout(() => {
+        setHits(prev => [...prev, {
+          id: Math.random().toString(36).substr(2, 9),
+          x: targetX,
+          y: targetY,
+          createdAt: gameTimeRef.current,
+          color: '#3498db'
+        }]);
+
+        setZombies(prev => {
+          return prev.map(z => {
+            const isTarget = targetZombies.some(tz => tz.id === z.id);
+            if (isTarget) {
+              return {
+                ...z,
+                isFrozen: true,
+                frozenUntil: gameTimeRef.current + 6000,
+                chillAmount: 1
+              };
+            }
+            return z;
+          });
+        });
+      }, 800);
+      
+      playSFX('/Sniper/Sound/Demoman/Sound/DemomanFire1.ogg');
+    }
   };
 
   const selectedUnit = units.find(u => u.id === selectedUnitId);
@@ -1176,13 +2645,16 @@ export default function App() {
                         diff === 'Easy' ? 'bg-[#4CAF50]/20 border-[#4CAF50] text-[#C8E6C9]' :
                         diff === 'Normal' ? 'bg-[#2196F3]/20 border-[#2196F3] text-[#BBDEFB]' :
                         diff === 'Hard' ? 'bg-[#FF9800]/20 border-[#FF9800] text-[#FFE0B2]' :
+                        diff === 'Infinite' ? 'bg-[#795548]/30 border-[#5D4037] text-[#D7CCC8]' :
                         'bg-[#F44336]/20 border-[#F44336] text-[#FFCDD2]'
                       }`}
                     >
                       <div className="flex flex-col items-start relative z-10">
-                        <span className="text-2xl font-black uppercase tracking-tight italic">{t(diffKey as string)}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xl font-black uppercase tracking-tight italic">{t(diffKey as string)}</span>
+                        </div>
                         <span className="text-[10px] font-bold opacity-60 tracking-widest uppercase">
-                          {diff === 'Very Easy' ? t('relaxed') : diff === 'Insane' ? t('ultimate') : t('standard')}
+                          {diff === 'Very Easy' ? t('relaxed') : diff === 'Insane' ? t('ultimate') : diff === 'Infinite' ? t('farwest') : t('standard')}
                         </span>
                       </div>
                       
@@ -1217,123 +2689,268 @@ export default function App() {
           </div>
         )}
 
-        {/* Top Bar */}
-        <div className="absolute top-5 left-5 right-5 h-[100px] flex gap-5 z-[100]">
-          {/* Resource Panel */}
-          <div className="flex gap-4">
-            <div className="bg-ui-bg border-4 border-ui-border rounded-xl px-5 py-2 flex flex-col justify-center min-w-[120px] shadow-[0_4px_0_rgba(0,0,0,0.3)]">
-               <span className="text-[10px] font-black text-white/50 uppercase leading-none mb-1">{t('wave')}</span>
-               <span className="text-2xl font-black text-accent-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,0.5)] tabular-nums">
-                 #{wave}
-               </span>
-            </div>
+        {/* Loadout Selection Screen */}
+        {gameState === 'loadout' && (
+          <div className="fixed inset-0 bg-[#000000]/90 backdrop-blur-sm z-[5000] flex items-center justify-center p-8">
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              className="bg-[#1a1a1a] border-8 border-ui-border rounded-[40px] p-8 max-w-4xl w-full shadow-[0_30px_60px_rgba(0,0,0,0.9)] z-10 relative overflow-y-auto max-h-[95%]"
+            >
+              <div className="text-center mb-8">
+                <h2 className="text-5xl font-black text-white italic uppercase tracking-tighter mb-2 italic drop-shadow-[0_4px_0_rgba(255,193,7,0.5)]">{t('selectLoadout')}</h2>
+                <p className="text-white/40 font-bold uppercase tracking-[4px] text-xs">{t('maxUnits')}</p>
+              </div>
 
-            <div className="bg-ui-bg border-4 border-ui-border rounded-xl px-5 py-2 flex items-center gap-4 min-w-[180px] shadow-[0_4px_0_rgba(0,0,0,0.3)]">
-              <div className="w-12 h-10 bg-[#27ae60] border-2 border-money-green rounded relative flex flex-col justify-center items-center after:content-[''] after:absolute after:w-full after:h-2 after:bg-white after:opacity-80">
-                <img 
-                  src="/Random icon/Cash_Icon.webp" 
-                  alt="Money" 
-                  className="w-8 h-8 object-contain relative z-10" 
-                  referrerPolicy="no-referrer"
-                />
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-8">
+                {ALL_UNIT_TYPES.map((unit) => {
+                  const isSelected = selectedLoadout.includes(unit.type);
+                  return (
+                    <button
+                      key={unit.type}
+                      onClick={() => toggleUnitInLoadout(unit.type)}
+                      className={`group relative p-6 rounded-3xl border-4 transition-all duration-300 flex flex-col items-center justify-center min-h-[160px] ${
+                        isSelected 
+                          ? 'bg-accent-yellow/20 border-accent-yellow scale-105 shadow-[0_0_30px_rgba(241,196,15,0.4)]' 
+                          : 'bg-black/40 border-white/5 hover:border-white/20'
+                      }`}
+                    >
+                      <div className="w-24 h-24 bg-black/40 rounded-2xl mb-3 flex items-center justify-center p-3">
+                        <img 
+                          src={unit.icon} 
+                          alt={unit.type} 
+                          className={`w-full h-full object-contain transition-all duration-300 ${isSelected ? 'scale-110 rotate-3' : 'opacity-40 grayscale group-hover:opacity-60'} ${unit.type === 'freezer' ? 'scale-x-[-1]' : ''}`}
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+                      <span className={`text-base font-black uppercase italic tracking-tighter text-center ${isSelected ? 'text-white' : 'text-white/30'}`}>
+                        {t(unit.nameKey)}
+                      </span>
+                      {isSelected && (
+                        <div className="absolute -top-3 -right-3 w-8 h-8 bg-accent-yellow rounded-full flex items-center justify-center shadow-lg border-4 border-[#1a1a1a]">
+                          <Shield size={16} className="text-black" />
+                        </div>
+                      )}
+                    </button>
+                  );
+                })}
               </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] font-black text-white/50 uppercase leading-none mb-1">{t('money')}</span>
-                <span className="text-3xl font-bold text-money-green [text-shadow:2px_2px_0px_rgba(0,0,0,0.5)] tabular-nums leading-none">
-                  {isInfiniteMoney ? '∞' : `$${money.toLocaleString()}`}
-                </span>
-              </div>
-            </div>
 
-            {/* Base Health Panel */}
-            <div className="bg-ui-bg border-4 border-ui-border rounded-xl px-5 py-2 flex items-center gap-4 min-w-[180px] shadow-[0_4px_0_rgba(0,0,0,0.3)]">
-              <div className="w-12 h-10 bg-danger-red border-2 border-[#922b21] rounded flex items-center justify-center">
-                <Shield size={24} className="text-white" />
+              <div className="flex gap-4">
+                <button 
+                  onClick={() => setGameState('menu')}
+                  className="flex-1 bg-white/5 text-white/50 py-4 rounded-3xl font-black text-xl uppercase italic tracking-tighter border-4 border-white/5 hover:bg-white/10"
+                >
+                  {t('back')}
+                </button>
+                <button 
+                  onClick={confirmLoadout}
+                  disabled={selectedLoadout.length === 0}
+                  className={`flex-[2] py-4 rounded-3xl font-black text-2xl uppercase italic tracking-tighter transition-all shadow-[0_8px_0_#27ae60] border-4 border-white/10 ${
+                    selectedLoadout.length > 0 
+                      ? 'bg-[#2ecc71] text-white hover:scale-[1.02] active:shadow-none translate-y-[-2px]' 
+                      : 'bg-gray-500 text-white/50 cursor-not-allowed opacity-50 shadow-none'
+                  }`}
+                >
+                  {t('confirmLoadout')}
+                </button>
               </div>
-              <div className="flex flex-col">
-                <span className="text-[10px] font-black text-white/50 uppercase leading-none mb-1">{t('lives')}</span>
-                <div className="flex items-center gap-2">
-                  <div className="w-24 h-3 bg-black/40 rounded-full overflow-hidden border border-white/10">
-                    <motion.div 
-                      initial={{ width: '100%' }}
-                      animate={{ width: `${lives}%` }}
-                      className={`h-full ${lives > 50 ? 'bg-money-green' : lives > 20 ? 'bg-orange-500' : 'bg-danger-red'}`}
+            </motion.div>
+          </div>
+        )}
+
+        {/* Game UI - Only during playing */}
+        {gameState === 'playing' && (
+          <>
+            {/* Top Bar - Multi-element panels */}
+            <div className="absolute top-5 left-5 right-5 flex items-center gap-3 z-[100] h-[90px]">
+              {/* Resource Panel */}
+              <div className="flex gap-2 shrink-0 h-full items-center">
+                {/* Wave Counter */}
+                <div className="bg-ui-bg border-2 border-ui-border rounded-xl px-3 py-1 flex flex-col justify-center min-w-[70px] shadow-[0_4px_0_rgba(0,0,0,0.3)]">
+                   <span className="text-[8px] font-black text-white/50 uppercase leading-none mb-0.5">{t('wave')}</span>
+                   <span className="text-xl font-black text-accent-yellow [text-shadow:2px_2px_0px_rgba(0,0,0,0.5)] tabular-nums">
+                     #{wave}
+                   </span>
+                </div>
+ 
+                {/* Money Box */}
+                <div className="bg-ui-bg border-2 border-ui-border rounded-xl px-3 py-1 flex items-center gap-2 min-w-[120px] shadow-[0_4px_0_rgba(0,0,0,0.3)]">
+                  <div className="w-8 h-7 bg-[#27ae60] border border-money-green rounded relative flex flex-col justify-center items-center after:content-[''] after:absolute after:w-full after:h-1.5 after:bg-white after:opacity-80">
+                    <img 
+                      src="/Random icon/Cash_Icon.webp" 
+                      alt="Money" 
+                      className="w-5 h-5 object-contain relative z-10" 
+                      referrerPolicy="no-referrer"
                     />
                   </div>
-                  <span className="text-xl font-bold text-white tabular-nums">
-                    {lives}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-black text-white/50 uppercase leading-none mb-0.5">{t('money')}</span>
+                    <span className="text-lg font-bold text-money-green [text-shadow:2px_2px_0px_rgba(0,0,0,0.5)] tabular-nums leading-none">
+                      {isInfiniteMoney ? '∞' : `$${money.toLocaleString()}`}
+                    </span>
+                  </div>
+                </div>
+ 
+                {/* Base Health Panel */}
+                <div className="bg-ui-bg border-2 border-ui-border rounded-xl px-3 py-1 flex items-center gap-2 min-w-[120px] shadow-[0_4px_0_rgba(0,0,0,0.3)]">
+                  <div className="w-8 h-7 bg-danger-red border border-[#922b21] rounded flex items-center justify-center">
+                    <Shield size={16} className="text-white" />
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[8px] font-black text-white/50 uppercase leading-none mb-0.5">{t('lives')}</span>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-16 h-2 bg-black/40 rounded-full overflow-hidden border border-white/10">
+                        <motion.div 
+                          initial={{ width: '100%' }}
+                          animate={{ width: `${lives}%` }}
+                          className={`h-full ${lives > 50 ? 'bg-money-green' : lives > 20 ? 'bg-orange-500' : 'bg-danger-red'}`}
+                        />
+                      </div>
+                      <span className="text-base font-bold text-white tabular-nums">
+                        {lives}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
+ 
+              {/* Unit selection bar - Compacted and Small */}
+              <div className="bg-ui-bg border-2 border-ui-border rounded-xl flex-none flex items-center justify-center px-1 gap-1 h-full">
+                {selectedLoadout.map((ut) => {
+                  const levels = getLevels(ut);
+                  const cost = Math.floor(levels[0].cost);
+                  const isSelected = selectedSeed === ut;
+                  
+                  return (
+                    <button
+                      key={ut}
+                      onClick={() => setSelectedSeed(isSelected ? null : ut)}
+                      className={`w-[46px] h-[64px] rounded-lg border-2 relative cursor-pointer flex flex-col items-center justify-center transition-all duration-200 ${ 
+                        isSelected 
+                          ? 'bg-[#EBDCB2] border-accent-yellow border-2 -translate-y-1' 
+                          : 'bg-[#D7C6A3] border-[#8B6B4C] hover:border-white/30'
+                      } ${money < cost && !isInfiniteMoney ? 'opacity-50 grayscale' : ''}`}
+                    >
+                      <div className="w-8 h-8 flex items-center justify-center mb-0.5">
+                        <img src={levels[0].icon || levels[0].appearance} alt={ut} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                      </div>
+                      <div className="bg-[#6D4C41] text-white text-[7px] font-black px-1 py-0.5 rounded-md">
+                        ${cost}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Game Speed Controls */}
+              <div className="flex flex-col bg-ui-bg border-2 border-ui-border rounded-xl p-1 gap-0.5 h-full min-w-[60px] justify-center items-center shadow-[0_4px_0_rgba(0,0,0,0.3)] shrink-0">
+                <span className="text-[7px] font-black text-white/50 uppercase leading-none">Speed</span>
+                <div className="grid grid-cols-2 gap-0.5">
+                  {[0.5, 1.0, 1.5, 2.0].map(speed => (
+                    <button
+                      key={speed}
+                      onClick={() => setGameSpeed(speed)}
+                      className={`text-[8px] font-black px-1 py-0.5 rounded transition-colors ${
+                        gameSpeed === speed ? 'bg-accent-yellow text-black' : 'bg-white/10 text-white hover:bg-white/20'
+                      }`}
+                    >
+                      {speed}x
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Abilities Panel */}
+              <div className="flex flex-col bg-ui-bg border-2 border-ui-border rounded-xl p-1 gap-0.5 h-full min-w-[80px] justify-center items-center shadow-[0_4px_0_rgba(0,0,0,0.3)] shrink-0 overflow-hidden">
+                <span className="text-[7px] font-black text-white/50 uppercase leading-none">Abilities</span>
+                <div className="flex gap-1 items-center justify-center h-full">
+                  {units.filter(u => (getLevels(u.unitType)[u.level] as any).hasAbility).length === 0 ? (
+                    <div className="w-10 h-10 bg-black/20 border-2 border-white/5 rounded-xl flex items-center justify-center p-1 overflow-hidden" />
+                  ) : (
+                    <button 
+                      onClick={() => {
+                        const readyUnit = units.find(u => 
+                          (getLevels(u.unitType)[u.level] as any).hasAbility && 
+                          !(u.abilityCooldowns?.['Frost Grenade'] && gameTimeRef.current < (u.abilityCooldowns as any)['Frost Grenade'])
+                        );
+                        if (readyUnit) useAbility(readyUnit.id, 'Frost Grenade');
+                      }}
+                      className="relative group active:scale-95 transition-transform"
+                    >
+                       <div className="w-10 h-10 bg-blue-900/40 border-2 border-blue-400/50 rounded-xl flex items-center justify-center p-1 overflow-hidden shadow-inner">
+                         <img src="/Freezer/Ability/Jester_Ability.webp" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                         <div className="absolute -top-1 -right-1 bg-accent-yellow text-black text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#1a1a1a] shadow-lg">
+                           {units.filter(u => (getLevels(u.unitType)[u.level] as any).hasAbility && !(u.abilityCooldowns?.['Frost Grenade'] && gameTimeRef.current < (u.abilityCooldowns as any)['Frost Grenade'])).length}
+                         </div>
+                       </div>
+                    </button>
+                  )}
+                </div>
+              </div>
+ 
+              {/* Menu Button */}
+              <button 
+                onClick={() => setIsPaused(true)}
+                className="bg-ui-bg border-2 border-ui-border rounded-xl px-4 hover:bg-ui-border transition-colors text-white text-sm font-black uppercase tracking-tighter flex items-center justify-center shrink-0 h-full"
+              >
+                {t('menu')}
+              </button>
             </div>
-          </div>
-                   {/* Seed Bar */}
-          <div className="bg-ui-bg border-4 border-ui-border rounded-xl flex-grow flex items-center px-4 gap-3">
-            <button
-              onClick={() => setSelectedSeed(selectedSeed === 'farm' ? null : 'farm')}
-              className={`w-[70px] h-[85px] rounded border-2 relative cursor-pointer flex flex-col items-center justify-end pb-1 transition-all duration-200 ${ 
-                selectedSeed === 'farm' 
-                  ? 'bg-[#D7C6A3] border-accent-yellow border-4 -translate-y-1' 
-                  : 'bg-[#D7C6A3] border-[#8B6B4C] hover:border-white/30'
-              }`}
-            >
-              <div className="w-10 h-10 bg-[#27ae60] rounded-sm mb-4 flex items-center justify-center overflow-hidden">
-                <img src={FARM_LEVELS[0].icon || FARM_LEVELS[0].appearance} alt="Farm" className="w-8 h-8 object-contain" referrerPolicy="no-referrer" />
-              </div>
-              <div className="bg-[#6D4C41] text-white text-[10px] font-bold px-2 py-0.5 rounded-full absolute bottom-1">
-                ${Math.floor(FARM_LEVELS[0].cost)}
-              </div>
-            </button>
 
-            <button
-              onClick={() => setSelectedSeed(selectedSeed === 'scout' ? null : 'scout')}
-              className={`w-[70px] h-[85px] rounded border-2 relative cursor-pointer flex flex-col items-center justify-end pb-1 transition-all duration-200 ${ 
-                selectedSeed === 'scout' 
-                  ? 'bg-[#D7C6A3] border-accent-yellow border-4 -translate-y-1' 
-                  : 'bg-[#D7C6A3] border-[#8B6B4C] hover:border-white/30'
-              }`}
-            >
-              <div className="w-10 h-10 bg-[#2980b9] rounded-sm mb-4 flex items-center justify-center overflow-hidden">
-                <img src={SCOUT_LEVELS[0].icon || SCOUT_LEVELS[0].appearance} alt="Scout" className="w-8 h-8 object-contain" referrerPolicy="no-referrer" />
-              </div>
-              <div className="bg-[#6D4C41] text-white text-[10px] font-bold px-2 py-0.5 rounded-full absolute bottom-1">
-                ${Math.floor(SCOUT_LEVELS[0].cost)}
-              </div>
-            </button>
+            {/* Game Board */}
+            <div className={`absolute top-[150px] left-1/2 -translate-x-1/2 w-[900px] h-[500px] border-4 border-[#334411] shadow-[inset_0_0_20px_rgba(0,0,0,0.3)] ${
+              difficulty === 'Very Easy' ? 'bg-[#FFD54F] border-[#816b1e]' : 
+              difficulty === 'Easy' ? 'bg-[#5D4636] border-[#3B2D21]' :
+              difficulty === 'Normal' ? 'bg-[#4a4a4a] border-[#333]' :
+              difficulty === 'Infinite' ? 'bg-[#d2b48c] border-[#5D4037]' :
+              'bg-grass-dark'
+            }`}>
+          {/* Far West Mode Decorations */}
+          {difficulty === 'Infinite' && (
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+               {/* Desert Ground Patterns */}
+               <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/dust.png')] opacity-30 mix-blend-multiply" />
+               
+               {/* Cacti */}
+               <div className="absolute bottom-10 left-5 text-4xl grayscale brightness-125 filter drop-shadow-lg">🌵</div>
+               <div className="absolute top-20 right-10 text-5xl grayscale brightness-125 filter drop-shadow-lg">🌵</div>
+               <div className="absolute top-1/2 left-2 text-2xl opacity-60">🌵</div>
+               
+               {/* Skulls and Bones */}
+               <div className="absolute bottom-5 right-20 text-3xl opacity-50 contrast-125">💀</div>
+               <div className="absolute top-10 left-[40%] text-2xl opacity-40">🦴</div>
+               <div className="absolute bottom-1/4 right-[5%] text-2xl opacity-40 rotate-45">🦴</div>
+               
+               {/* Tumbleweeds (Animated) */}
+               {Array.from({ length: 3 }).map((_, i) => (
+                 <motion.div
+                   key={i}
+                    initial={{ x: 1000, y: 300 + i * 50 }}
+                    animate={{ 
+                      x: -200, 
+                      rotate: 720,
+                      y: [300 + i * 50, 280 + i * 50, 310 + i * 50, 300 + i * 50]
+                    }}
+                    transition={{ 
+                      duration: 10 + i * 2, 
+                      repeat: Infinity, 
+                      ease: "linear",
+                      delay: i * 3
+                    }}
+                    className="absolute text-3xl filter saturate-50 brightness-75"
+                 >
+                   🪹
+                 </motion.div>
+               ))}
 
-            <button
-              onClick={() => setSelectedSeed(selectedSeed === 'sniper' ? null : 'sniper')}
-              className={`w-[70px] h-[85px] rounded border-2 relative cursor-pointer flex flex-col items-center justify-end pb-1 transition-all duration-200 ${ 
-                selectedSeed === 'sniper' 
-                  ? 'bg-[#D7C6A3] border-accent-yellow border-4 -translate-y-1' 
-                  : 'bg-[#D7C6A3] border-[#8B6B4C] hover:border-white/30'
-              }`}
-            >
-              <div className="w-10 h-10 bg-[#e74c3c] rounded-sm mb-4 flex items-center justify-center overflow-hidden">
-                <img src={SNIPER_LEVELS[0].icon || SNIPER_LEVELS[0].appearance} alt="Sniper" className="w-8 h-8 object-contain" referrerPolicy="no-referrer" />
-              </div>
-              <div className="bg-[#6D4C41] text-white text-[10px] font-bold px-2 py-0.5 rounded-full absolute bottom-1">
-                ${Math.floor(SNIPER_LEVELS[0].cost)}
-              </div>
-            </button>
-          </div>
-
-          {/* Menu Button */}
-          <button 
-            onClick={() => setIsPaused(true)}
-            className="bg-ui-bg border-4 border-ui-border rounded-xl px-6 hover:bg-ui-border transition-colors text-white font-black uppercase tracking-tighter flex items-center justify-center"
-          >
-            {t('menu')}
-          </button>
-        </div>
-
-        {/* Game Board */}
-        <div className={`absolute top-[150px] left-1/2 -translate-x-1/2 w-[900px] h-[500px] border-4 border-[#334411] shadow-[inset_0_0_20px_rgba(0,0,0,0.3)] ${
-          difficulty === 'Very Easy' ? 'bg-[#FFD54F] border-[#816b1e]' : 
-          difficulty === 'Easy' ? 'bg-[#5D4636] border-[#3B2D21]' :
-          difficulty === 'Normal' ? 'bg-[#4a4a4a] border-[#333]' :
-          'bg-grass-dark'
-        }`}>
+               {/* Distant Mountains / Horizon Glow */}
+               <div className="absolute bottom-0 inset-x-0 h-24 bg-orange-950/20 blur-xl" />
+               
+               {/* Sun Flare */}
+               <div className="absolute -top-20 -right-20 w-80 h-80 bg-orange-400/10 rounded-full blur-[100px]" />
+            </div>
+          )}
           {/* Normal Difficulty Decorations */}
           {difficulty === 'Normal' && (
             <div className="absolute inset-0 pointer-events-none overflow-hidden opacity-50">
@@ -1529,22 +3146,49 @@ export default function App() {
                 <motion.div
                   key={proj.id}
                   initial={{ x: proj.x, y: proj.y, opacity: 1, scale: 0.8 }}
-                  animate={{ x: proj.targetX, y: proj.targetY, rotate: proj.rotation }}
-                  transition={{ duration: 0.15, ease: "linear" }}
+                  animate={{ 
+                    x: proj.targetX, 
+                    y: proj.type === 'grenade' 
+                      ? [proj.y, proj.y - 180, proj.y - 220, proj.y - 180, proj.targetY]
+                      : [proj.y, proj.targetY],
+                    rotate: proj.type === 'grenade' ? [0, 360, 720, 1080] : proj.rotation, 
+                    scale: proj.type === 'knife' ? [0.8, 1.5, 1.2] : [0.8, 1.2, 1] 
+                  }}
+                  transition={{ duration: proj.duration || 0.25, ease: proj.type === 'grenade' ? "easeOut" : "linear" }}
                   onAnimationComplete={() => {
                     setProjectiles(prev => prev.filter(p => p.id !== proj.id));
                   }}
                   className="absolute pointer-events-none"
                   style={{
-                    width: proj.type === 'sniper-bullet' ? 12 : 8,
-                    height: proj.type === 'sniper-bullet' ? 4 : 4,
-                    backgroundColor: proj.color,
-                    borderRadius: '2px',
-                    boxShadow: `0 0 8px ${proj.color}`,
-                    transform: 'translate(-50%, -50%)',
+                    width: proj.type === 'grenade' ? 40 : proj.type === 'sniper-bullet' ? 24 : proj.type === 'knife' ? 30 : proj.type === 'paintball' ? 12 : 16,
+                    height: proj.type === 'grenade' ? 40 : proj.type === 'sniper-bullet' ? 6 : proj.type === 'knife' ? 10 : proj.type === 'paintball' ? 12 : 6,
                     zIndex: 1500
                   }}
-                />
+                >
+                  {proj.type === 'grenade' ? (
+                    <img src="/Freezer/Ability/DefaultFreezeNade.webp" className="w-full h-full object-contain drop-shadow-[0_0_10px_#3498db]" referrerPolicy="no-referrer" />
+                  ) : proj.type === 'knife' ? (
+                    <div className="w-full h-full relative group">
+                        <div 
+                          className="w-full h-full bg-gradient-to-r from-gray-400 to-white rounded-l-full shadow-[0_0_10px_rgba(255,255,255,0.8)]"
+                          style={{
+                             clipPath: 'polygon(0% 50%, 100% 0%, 100% 100%)'
+                          }}
+                        />
+                        <div className="absolute right-0 top-0 bottom-0 w-2 bg-amber-900 rounded-r-md" />
+                    </div>
+                  ) : (
+                    <div 
+                      className="w-full h-full"
+                      style={{
+                        backgroundColor: proj.color,
+                        borderRadius: proj.type === 'paintball' ? '50%' : '4px',
+                        boxShadow: `0 0 12px ${proj.color}`,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                    />
+                  )}
+                </motion.div>
               ))}
             </AnimatePresence>
           </div>
@@ -1555,23 +3199,43 @@ export default function App() {
               {hits.map(hit => (
                 <motion.div
                   key={hit.id}
-                  initial={{ scale: 0, opacity: 1 }}
-                  animate={{ scale: [1, 2.5, 1.8], opacity: [1, 1, 0] }}
-                  transition={{ duration: 0.15 }}
+                  initial={hit.type === 'whirlwind' ? { scale: 0, opacity: 1, rotate: 0 } : { scale: 0, opacity: 1, rotate: Math.random() * 360 }}
+                  animate={hit.type === 'whirlwind' 
+                    ? { scale: [0, 4, 3], opacity: [0, 1, 0], rotate: 720 } 
+                    : { scale: [1, 4, 3], opacity: [1, 1, 0] }
+                  }
+                  transition={{ duration: hit.type === 'whirlwind' ? 0.5 : 0.2 }}
                   className="absolute pointer-events-none"
                   style={{
                     left: hit.x,
                     top: hit.y,
-                    width: 20,
-                    height: 20,
-                    backgroundColor: hit.color,
-                    borderRadius: '50%',
-                    filter: 'blur(2px)',
-                    boxShadow: `0 0 15px ${hit.color}`,
+                    width: hit.type === 'whirlwind' ? 150 : 30,
+                    height: hit.type === 'whirlwind' ? 150 : 30,
+                    backgroundColor: hit.type === 'whirlwind' ? 'transparent' : hit.color,
+                    borderRadius: hit.type === 'whirlwind' ? '50%' : '20%',
+                    filter: 'blur(1px)',
+                    boxShadow: hit.type === 'whirlwind' 
+                      ? 'none' 
+                      : `0 0 20px ${hit.color}, 0 0 40px ${hit.color}`,
                     transform: 'translate(-50%, -50%)',
-                    zIndex: 1600
+                    zIndex: 1600,
+                    border: hit.type === 'whirlwind' ? '6px double #2ecc71' : 'none'
                   }}
-                />
+                >
+                  {hit.type === 'whirlwind' && (
+                    <div className="w-full h-full relative">
+                        <div className="absolute inset-0 bg-green-500/10 rounded-full blur-md" />
+                        <motion.div 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: [0, 0.8, 0], rotate: [0, 180] }}
+                          transition={{ duration: 0.4 }}
+                          className="absolute inset-0 border-r-[12px] border-l-[12px] border-white/40 rounded-full" 
+                        />
+                        <div className="absolute inset-0 border-2 border-green-400/50 rounded-full" />
+                        <div className="absolute inset-1/4 border-4 border-white/20 rounded-full animate-pulse" />
+                    </div>
+                  )}
+                </motion.div>
               ))}
             </AnimatePresence>
           </div>
@@ -1649,16 +3313,51 @@ export default function App() {
                   }}
                 >
                   <div className={`relative w-24 h-24 flex items-center justify-center ${selectedUnitId === unit.id ? 'drop-shadow-[0_0_8px_gold]' : ''}`}>
-                    <img 
-                      src={
-                        unit.unitType === 'farm' ? FARM_LEVELS[unit.level].appearance :
-                        unit.unitType === 'scout' ? SCOUT_LEVELS[unit.level].appearance :
-                        SNIPER_LEVELS[unit.level].appearance
-                      } 
-                      alt={unit.unitType} 
-                      className="w-full h-full object-contain p-1 scale-x-[-1]"
-                      referrerPolicy="no-referrer"
-                    />
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.05, 1],
+                        rotate: [0, -1, 1, 0]
+                      }}
+                      transition={{
+                        duration: 3 + Math.random(),
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                      className="w-full h-full flex items-center justify-center"
+                    >
+                      <motion.div
+                        key={unit.unitType === 'farm' ? unit.lastProductionTime : unit.lastAttackTime}
+                        initial={{ x: 0, scale: 1 }}
+                        animate={
+                          unit.unitType === 'farm' && unit.lastProductionTime && (Date.now() - unit.lastProductionTime < 500) ? {
+                            scale: [1, 1.2, 1],
+                            rotate: [0, -5, 5, 0]
+                          } :
+                          unit.lastAttackTime && (Date.now() - unit.lastAttackTime < 100) ? {
+                            x: ['demoman', 'soldier', 'shotgunner', 'sniper'].includes(unit.unitType) ? -10 : 10,
+                            scale: [1, 1.1, 1]
+                          } : {}
+                        }
+                        className="w-full h-full flex items-center justify-center"
+                      >
+                        <img 
+                          src={
+                            unit.unitType === 'farm' ? FARM_LEVELS[unit.level].appearance :
+                            unit.unitType === 'scout' ? SCOUT_LEVELS[unit.level].appearance :
+                            unit.unitType === 'sniper' ? SNIPER_LEVELS[unit.level].appearance :
+                            unit.unitType === 'demoman' ? DEMOMAN_LEVELS[unit.level].appearance :
+                            unit.unitType === 'soldier' ? SOLDIER_LEVELS[unit.level].appearance :
+                            unit.unitType === 'shotgunner' ? SHOTGUNNER_LEVELS[unit.level].appearance :
+                            unit.unitType === 'freezer' ? FREEZER_LEVELS[unit.level].appearance :
+                            unit.unitType === 'assassin' ? ASSASSIN_LEVELS[unit.level].appearance :
+                            PAINTBALLER_LEVELS[unit.level].appearance
+                          } 
+                          alt={unit.unitType} 
+                          className={`w-full h-full object-contain p-1 ${['demoman', 'soldier', 'shotgunner', 'freezer', 'assassin'].includes(unit.unitType) ? '' : 'scale-x-[-1]'}`}
+                          referrerPolicy="no-referrer"
+                        />
+                      </motion.div>
+                    </motion.div>
                   </div>
                 </motion.div>
               );
@@ -1676,15 +3375,21 @@ export default function App() {
                   transform: `scale(${(zombie.isBloated ? 1.4 : 1) * (zombie.isTank ? 1.5 : 1)})`,
                   zIndex: 10 + zombie.row
                 }}
-                animate={zombie.isEating ? {
+                animate={zombie.isFrozen ? {
+                   scale: 1,
+                   rotate: 0,
+                   x: 0,
+                   y: 0
+                } : zombie.isEating ? {
                   scale: [1, 1.1, 1],
                   translateX: [0, -5, 0]
                 } : {
                   rotate: [0, -2, 2, 0],
-                  translateY: [0, -2, 0]
+                  translateY: [0, -2, 0],
+                  x: zombie.chillAmount > 0 ? [0, -1, 1, -1, 1, 0] : 0
                 }}
                 transition={{
-                  duration: zombie.isEating ? 0.3 : 0.6,
+                  duration: zombie.isFrozen ? 0.1 : zombie.isEating ? 0.3 : (zombie.chillAmount > 0 ? 0.1 : 0.6),
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
@@ -1693,6 +3398,37 @@ export default function App() {
                 }}
               >
                 <div className="w-full h-full relative flex items-center justify-center">
+                  {/* Frozen/Ice Block Overlay */}
+                  {zombie.isFrozen && (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1.15 }}
+                      className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none"
+                    >
+                      <div className="w-full h-full bg-blue-300/40 border-[6px] border-blue-100/60 rounded-xl backdrop-blur-[2px] shadow-[inset_0_0_30px_white,0_0_20px_#3498db]" />
+                      <div className="absolute inset-0 opacity-40 bg-[url('https://www.transparenttextures.com/patterns/ice-age.png')] invert scale-125" />
+                      <div className="absolute top-1 right-2 text-white/50 text-[8px] font-black rotate-45 select-none">ICE</div>
+                    </motion.div>
+                  )}
+                  {/* Boss Attribute Indicator */}
+                  {zombie.hasBossAttribute && (
+                    <motion.div
+                      initial={{ scale: 0, y: 0, opacity: 0 }}
+                      animate={{ 
+                        scale: [0, 1.2, 1, 1, 0], 
+                        y: [0, -45, -45, -45, -60],
+                        opacity: [0, 1, 1, 0]
+                      }}
+                      transition={{ 
+                        duration: 5, 
+                        times: [0, 0.1, 0.2, 0.8, 1],
+                        ease: "easeOut"
+                      }}
+                      className="absolute z-[60] bg-purple-600 border-2 border-purple-400 rounded-lg px-2 py-0.5 shadow-[0_0_10px_purple]"
+                    >
+                      <span className="text-[10px] font-black text-white italic uppercase tracking-tighter text-nowrap">BOSS APPEARED!</span>
+                    </motion.div>
+                  )}
                   {/* Stun Stars Animation */}
                   {zombie.isStunned && (
                     <div className="absolute -top-6 inset-x-0 flex justify-center z-50 pointer-events-none">
@@ -1713,18 +3449,26 @@ export default function App() {
                       ))}
                     </div>
                   )}
-                  <img 
-                    src={zombie.isTank 
-                      ? `/Enemys/Normal/NormalAnim3.webp`
-                      : zombie.name === 'Speedy' 
+               <img 
+                    src={zombie.zombieType === 'SLOW'
+                      ? `/Enemys/Normal/Slow/SlowAnim${zombie.variant % 2 + 1}.webp`
+                      : zombie.zombieType === 'SPEEDY' 
                       ? `/Enemys/Normal/Speedy/SpeedyAnim${zombie.variant % 2 + 1}.webp`
+                      : zombie.zombieType === 'NORMAL_BOSS'
+                      ? `/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/EasyModeNormalBoss.webp`
+                      : zombie.zombieType === 'HIDDEN'
+                      ? `/Enemys/Normal/Hidden/HiddenV5.webp`
+                      : zombie.zombieType === 'BREAKER2'
+                      ? `/Enemys/Normal/Breakers/Breaker2/Breaker2Fallen.webp`
+                      : zombie.zombieType === 'BREAKER'
+                      ? `/Enemys/Normal/Breakers/Breaker/BreakerFallen.webp`
                       : `/Enemys/Normal/NormalAnim${zombie.variant % 2 + 1}.webp`} 
                     alt="Zombie" 
                     className={`w-full h-full object-contain ${zombie.isStunned ? 'brightness-75' : ''}`}
                     style={{
                       filter: [
                         zombie.isBloated ? 'sepia(0.5) hue-rotate(-50deg) saturate(1.5)' : '',
-                        zombie.isTank ? 'brightness(0.6) contrast(1.4)' : ''
+                        zombie.isTank ? 'drop-shadow(0 0 8px rgba(0,0,0,0.4))' : '',
                       ].filter(Boolean).join(' ') || 'none'
                     }}
                     referrerPolicy="no-referrer"
@@ -1742,7 +3486,7 @@ export default function App() {
                   />
                 </div>
                 {/* Zombie HP */}
-                <div className="absolute -top-3 left-1 right-1 h-3.5 bg-danger-red rounded-sm border border-black/30 flex items-center justify-center shadow-lg">
+                <div className={`absolute -top-3 left-1 right-1 h-3.5 ${zombie.hasBossAttribute || (zombie.zombieType === 'NORMAL_BOSS' && !introducedTypesRef.current.has('NORMAL_BOSS')) ? 'bg-purple-600' : 'bg-danger-red'} rounded-sm border border-black/30 flex items-center justify-center shadow-lg`}>
                    <span className="text-[9px] font-black text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
                     HP: {Math.ceil(zombie.hp)}
                   </span>
@@ -1840,7 +3584,7 @@ export default function App() {
               }}
             >
               {(() => {
-                const levels = selectedUnit.unitType === 'farm' ? FARM_LEVELS : selectedUnit.unitType === 'scout' ? SCOUT_LEVELS : SNIPER_LEVELS;
+                const levels = getLevels(selectedUnit.unitType);
                 const currentData = levels[selectedUnit.level];
                 const nextData = levels[selectedUnit.level + 1];
                 const isMax = selectedUnit.level >= levels.length - 1;
@@ -1848,6 +3592,12 @@ export default function App() {
                 // Explicitly cast for TS property access
                 const cur = currentData as any;
                 const nxt = nextData as any;
+
+                const nextDetections = !isMax ? {
+                  hidden: nxt.hasHiddenDetection && !cur.hasHiddenDetection,
+                  lead: nxt.hasLeadDetection && !cur.hasLeadDetection,
+                  flying: nxt.hasFlyingDetection && !cur.hasFlyingDetection,
+                } : null;
 
                 return (
                   <>
@@ -1914,55 +3664,160 @@ export default function App() {
                         </div>
                       )
                     ) : (
-                      !isMax ? (
-                        <div className="space-y-4">
-                          <div className="bg-white/5 rounded-xl p-3 border border-white/10">
-                            <p className="text-[10px] text-white/40 uppercase font-bold mb-1">{t('upgradeEffect')}</p>
-                            <p className="text-sm font-black text-accent-yellow italic">
-                              {nxt.description}
-                            </p>
-                          </div>
+                      <div className="space-y-4">
+                        {/* Stat Pair 1: Damage & Firerate */}
+                    <div className="grid grid-cols-2 gap-2">
+                       <div className="bg-black/20 p-2 rounded-xl flex flex-col items-center">
+                          <span className="text-[8px] text-white/30 uppercase font-black">{t('damage')}</span>
+                          <span className="text-sm font-bold text-white tracking-tighter">{cur.damage}</span>
+                       </div>
+                       <div className="bg-black/20 p-2 rounded-xl flex flex-col items-center">
+                          <span className="text-[8px] text-white/30 uppercase font-black">{t('firerate')}</span>
+                          <span className="text-sm font-bold text-white tracking-tighter">{(1000/cur.interval).toFixed(2)}/s</span>
+                       </div>
+                    </div>
 
-                          <div className="grid grid-cols-[1fr,auto,1fr] items-center gap-2 bg-black/40 p-3 rounded-2xl border border-white/5">
-                            <div className="flex flex-col items-center">
-                               <span className="text-[8px] text-white/30 uppercase font-black mb-1">{t('damage')}</span>
-                               <span className="text-sm font-bold text-white">{cur.damage}</span>
+                    {/* Detections & Special */}
+                    <div className="flex flex-wrap gap-1.5 justify-center">
+                       {cur.hasHiddenDetection && (
+                         <span className="text-[7px] bg-purple-500/20 text-purple-300 border border-purple-500/30 px-1.5 py-0.5 rounded font-black uppercase">Hidden Detection</span>
+                       )}
+                       {cur.hasLeadDetection && (
+                         <span className="text-[7px] bg-slate-500/20 text-slate-300 border border-slate-500/30 px-1.5 py-0.5 rounded font-black uppercase">Lead Detection</span>
+                       )}
+                       {cur.hasFlyingDetection && (
+                         <span className="text-[7px] bg-blue-500/20 text-blue-300 border border-blue-500/30 px-1.5 py-0.5 rounded font-black uppercase">Flying Detection</span>
+                       )}
+                       {cur.hasWhirlwind && (
+                          <div className="flex flex-col items-center w-full mt-3 bg-black/60 p-4 rounded-2xl border-2 border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
+                            <div className="flex items-center gap-2 mb-2">
+                              <img src="/Assassin/Passive Ability Icons/WhirlwindSlashPassive.webp" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]" referrerPolicy="no-referrer" />
+                              <span className="text-xs text-green-400 font-black uppercase drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">Whirlwind Slash</span>
                             </div>
-                            <div className="w-px h-8 bg-white/10" />
-                            <div className="flex flex-col items-center">
-                               <span className="text-[8px] text-money-green uppercase font-black mb-1">{t('next')}</span>
-                               <span className="text-sm font-bold text-money-green">{nxt.damage}</span>
+                            <div className="w-full h-5 bg-black/80 rounded-full border-2 border-white/20 overflow-hidden shadow-[inset_0_2px_6px_rgba(0,0,0,1)]">
+                              <motion.div 
+                                className="h-full bg-gradient-to-r from-green-600 via-green-400 to-green-300 shadow-[0_0_15px_#22c55e]"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${((selectedUnit.slashCount || 0) % 3) / 3 * 100}%` }}
+                                transition={{ duration: 0.3 }}
+                              />
+                            </div>
+                            <p className="text-[10px] text-white/50 mt-1.5 font-bold italic">Trigger on 3rd hit (AoE Damage)</p>
+                          </div>
+                       )}
+                       {cur.hasFan && (
+                          <div className="flex flex-col items-center w-full mt-3 bg-black/60 p-4 rounded-2xl border-2 border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                            <div className="flex items-center gap-2 mb-2">
+                              <img src="/Assassin/Passive Ability Icons/FanofKnivesPassive.webp" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]" referrerPolicy="no-referrer" />
+                              <span className="text-xs text-red-500 font-black uppercase drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]">Fan of Knives</span>
+                            </div>
+                            <div className="w-full h-5 bg-black/80 rounded-full border-2 border-white/20 overflow-hidden shadow-[inset_0_2px_6px_rgba(0,0,0,1)]">
+                              <motion.div 
+                                className="h-full bg-gradient-to-r from-red-600 via-red-400 to-red-300 shadow-[0_0_15px_#ef4444]"
+                                initial={{ width: 0 }}
+                                animate={{ width: `${Math.min(100, (selectedUnit.damageSinceLastFan || 0) / 500 * 100)}%` }}
+                                transition={{ duration: 0.3 }}
+                              />
+                            </div>
+                            <p className="text-[10px] text-white/50 mt-1.5 font-bold italic">DMG CHARGE: {Math.floor(selectedUnit.damageSinceLastFan || 0)} / 500</p>
+                          </div>
+                       )}
+
+  {cur.splashRange && (
+    <span className="text-[7px] bg-orange-500/20 text-orange-300 border border-orange-500/30 px-1.5 py-0.5 rounded font-black uppercase">Splash Area: {cur.splashRange}</span>
+  )}
+                       
+                       {/* Unlocked in next level */}
+                       {nextDetections?.hidden && (
+                         <span className="text-[7px] bg-purple-600 text-white animate-pulse px-1.5 py-0.5 rounded font-black uppercase">+ Hidden Detection</span>
+                       )}
+                       {nextDetections?.lead && (
+                         <span className="text-[7px] bg-slate-600 text-white animate-pulse px-1.5 py-0.5 rounded font-black uppercase">+ Lead Detection</span>
+                       )}
+                       {nextDetections?.flying && (
+                         <span className="text-[7px] bg-blue-600 text-white animate-pulse px-1.5 py-0.5 rounded font-black uppercase">+ Flying Detection</span>
+                       )}
+                    </div>
+
+                        {!isMax ? (
+                           <>
+                             <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+                               <p className="text-[10px] text-white/40 uppercase font-bold mb-1">{t('upgradeEffect')}</p>
+                               <p className="text-sm font-black text-accent-yellow italic">
+                                 {nxt.description}
+                               </p>
+                             </div>
+
+                             <div className="grid grid-cols-[1fr,auto,1fr] items-center gap-2 bg-black/40 p-3 rounded-2xl border border-white/5">
+                               <div className="flex flex-col items-center">
+                                  <span className="text-[8px] text-white/30 uppercase font-black mb-1">STAT.</span>
+                                  <span className="text-sm font-bold text-white">{cur.damage} | {(1000/cur.interval).toFixed(1)}/s</span>
+                               </div>
+                               <div className="w-px h-8 bg-white/10" />
+                               <div className="flex flex-col items-center">
+                                  <span className="text-[8px] text-money-green uppercase font-black mb-1">{t('next')}</span>
+                                  <span className="text-sm font-bold text-money-green">{nxt.damage} | {(1000/nxt.interval).toFixed(1)}/s</span>
+                               </div>
+                             </div>
+
+                             <button
+                               onClick={() => handleUpgrade(selectedUnit.id)}
+                               disabled={!isInfiniteMoney && money < cur.upgradeCost}
+                               className="group w-full h-14 bg-money-green hover:bg-[#2ecc71] active:translate-y-1 transition-all rounded-2xl flex items-center justify-between px-6 shadow-[0_6px_0_#1e8449] disabled:opacity-50 disabled:grayscale disabled:shadow-none disabled:translate-y-1"
+                             >
+                               <span className="text-lg font-black text-white italic tracking-tighter">{t('upgrade')}</span>
+                               <div className="flex items-center gap-1.5 bg-black/20 px-3 py-1 rounded-full border border-white/10 group-hover:scale-105 transition-transform">
+                                 <img src="/Random icon/Cash_Icon.webp" alt="Cash" className="w-3 h-3" />
+                                 <span className="text-white font-black text-sm">${cur.upgradeCost}</span>
+                               </div>
+                             </button>
+                           </>
+                        ) : (
+                          <div className="bg-money-green/20 border-4 border-money-green p-8 rounded-3xl text-center shadow-[0_0_30px_rgba(46,204,113,0.3)]">
+                            <span className="text-6xl font-black text-money-green italic tracking-tighter uppercase drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] mb-2 block">{t('max')}</span>
+                            <div className="grid grid-cols-2 gap-2 bg-black/40 p-3 rounded-2xl border border-white/5">
+                              <div className="flex flex-col items-center">
+                                 <span className="text-[9px] text-white/30 uppercase font-black mb-1">{t('damage')}</span>
+                                 <span className="text-xl font-bold text-white">{cur.damage}</span>
+                              </div>
+                              <div className="flex flex-col items-center">
+                                 <span className="text-[9px] text-white/30 uppercase font-black mb-1">{t('firerate')}</span>
+                                 <span className="text-xl font-bold text-white">{(1000/cur.interval).toFixed(1)}/s</span>
+                              </div>
                             </div>
                           </div>
-                          <button
-                            onClick={() => handleUpgrade(selectedUnit.id)}
-                            disabled={!isInfiniteMoney && money < cur.upgradeCost}
-                            className="group w-full h-14 bg-money-green hover:bg-[#2ecc71] active:translate-y-1 transition-all rounded-2xl flex items-center justify-between px-6 shadow-[0_6px_0_#1e8449] disabled:opacity-50 disabled:grayscale disabled:shadow-none disabled:translate-y-1"
-                          >
-                            <span className="text-lg font-black text-white italic tracking-tighter">{t('upgrade')}</span>
-                            <div className="flex items-center gap-1.5 bg-black/20 px-3 py-1 rounded-full border border-white/10 group-hover:scale-105 transition-transform">
-                              <img src="/Random icon/Cash_Icon.webp" alt="Cash" className="w-3 h-3" />
-                              <span className="text-white font-black text-sm">${cur.upgradeCost}</span>
-                            </div>
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="bg-money-green/20 border-4 border-money-green p-8 rounded-3xl text-center shadow-[0_0_30px_rgba(46,204,113,0.3)]">
-                          <span className="text-6xl font-black text-money-green italic tracking-tighter uppercase drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)] mb-2 block">{t('max')}</span>
-                          <div className="grid grid-cols-2 gap-2 bg-black/40 p-3 rounded-2xl border border-white/5">
-                            <div className="flex flex-col items-center">
-                               <span className="text-[9px] text-white/30 uppercase font-black mb-1">{t('damage')}</span>
-                               <span className="text-xl font-bold text-white">{cur.damage}</span>
-                            </div>
-                            <div className="flex flex-col items-center">
-                               <span className="text-[9px] text-white/30 uppercase font-black mb-1">Velocità</span>
-                               <span className="text-xl font-bold text-white">{(1000/cur.interval).toFixed(1)}/s</span>
-                            </div>
-                          </div>
-                        </div>
-                      )
-                    )}
+                        )}
+                      </div>
+                    )
+                  }
                     
+                    <div className="bg-white/5 p-3 rounded-2xl border border-white/5 flex flex-col items-center mt-3">
+                       <span className="text-[10px] text-white/30 uppercase font-black mb-1">Danno Totale</span>
+                       <span className="text-xl font-bold text-accent-yellow">{Math.floor(selectedUnit.totalDamageDealt).toLocaleString()}</span>
+                    </div>
+
+                      {(getLevels(selectedUnit.unitType)[selectedUnit.level] as any).hasAbility && (
+                        <button
+                          onClick={() => useAbility(selectedUnit.id, 'Frost Grenade')}
+                          disabled={selectedUnit.abilityCooldowns?.['Frost Grenade'] && gameTimeRef.current < selectedUnit.abilityCooldowns['Frost Grenade']}
+                          className="mt-3 w-full h-16 bg-blue-600 hover:bg-blue-500 active:translate-y-1 transition-all rounded-2xl flex items-center justify-center gap-2 shadow-[0_4px_0_#2980b9] disabled:opacity-50 disabled:grayscale disabled:shadow-none overflow-hidden"
+                        >
+                           <div className="w-full h-full p-2 relative flex items-center justify-center">
+                             <img src="/Freezer/Ability/Jester_Ability.webp" className="h-full object-contain" />
+                             {selectedUnit.abilityCooldowns?.['Frost Grenade'] && gameTimeRef.current < selectedUnit.abilityCooldowns['Frost Grenade'] && (
+                               <div 
+                                 className="absolute inset-0 bg-black/60 flex items-center justify-center font-black text-white"
+                                 style={{
+                                   height: `${Math.max(0, (selectedUnit.abilityCooldowns['Frost Grenade'] - gameTimeRef.current) / 15000 * 100)}%`,
+                                   top: 'auto',
+                                   bottom: 0
+                                 }}
+                               />
+                             )}
+                           </div>
+                        </button>
+                      )}
+
                     <button 
                       onClick={() => handleSell(selectedUnit.id)}
                       className="mt-4 w-full py-2 text-[10px] text-white/40 hover:text-danger-red hover:bg-danger-red/10 rounded-xl uppercase font-bold tracking-widest transition-all flex justify-between px-4 border border-white/5"
@@ -1994,7 +3849,34 @@ export default function App() {
           </motion.div>
         )}
 
-        {/* Mod Console */}
+        {/* Boss HP Bar */}
+        {zombies.find(z => z.hasBossAttribute) && (
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 w-[600px] z-[1000] pointer-events-none">
+            {zombies.filter(z => z.hasBossAttribute).map(boss => (
+              <div key={boss.id} className="mb-2">
+                <div className="flex justify-between items-end mb-1">
+                  <span className="text-purple-400 font-black italic uppercase tracking-tighter text-lg drop-shadow-md">
+                    {t(boss.name)}
+                  </span>
+                  <span className="text-white font-bold text-sm">
+                    {Math.ceil(boss.hp)} / {Math.ceil(boss.maxHp)}
+                  </span>
+                </div>
+                <div className="h-4 bg-black/60 rounded-full border-2 border-purple-900/50 overflow-hidden backdrop-blur-sm shadow-lg">
+                  <motion.div 
+                    initial={{ width: '100%' }}
+                    animate={{ width: `${(boss.hp / boss.maxHp) * 100}%` }}
+                    className="h-full bg-gradient-to-r from-purple-800 to-purple-500 shadow-[0_0_15px_rgba(168,85,247,0.5)]"
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </>
+    )}
+
+    {/* Mod Console */}
         <AnimatePresence>
           {showModConsole && (
             <motion.div
@@ -2016,7 +3898,7 @@ export default function App() {
                     onClick={() => setIsInfiniteMoney(!isInfiniteMoney)}
                     className={`${isInfiniteMoney ? 'bg-yellow-500' : 'bg-money-green'} text-white py-2 rounded-lg text-sm font-bold hover:brightness-110 transition-all`}
                   >
-                    {isInfiniteMoney ? `${t('infiniteMoney')} (ON)` : t('infiniteMoney')}
+                    {isInfiniteMoney ? (t('infiniteMoney') + " (ON)") : t('infiniteMoney')}
                   </button>
                   <button 
                     onClick={() => setZombies([])}
@@ -2027,7 +3909,7 @@ export default function App() {
                   <button 
                     onClick={() => {
                       setUnits(prev => prev.map(u => {
-                        const levels = u.unitType === 'farm' ? FARM_LEVELS : u.unitType === 'scout' ? SCOUT_LEVELS : SNIPER_LEVELS;
+                        const levels = getLevels(u.unitType);
                         if (u.level >= levels.length - 1) return u;
                         return {
                           ...u,
@@ -2075,6 +3957,63 @@ export default function App() {
                   >
                     {t('revive')}
                   </button>
+
+                  <div className="border-t border-white/10 pt-3 mt-1 space-y-3">
+                    {/* Wave Jump */}
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-[10px] text-accent-yellow font-black uppercase">{t('jumpWave')}</span>
+                      <div className="flex gap-2">
+                        <input 
+                          type="number" 
+                          min="1"
+                          max="999"
+                          value={modWaveInput}
+                          onChange={(e) => setModWaveInput(e.target.value)}
+                          className="w-full bg-black/40 border-2 border-white/20 rounded-lg px-3 py-1.5 text-white text-xs font-bold focus:border-accent-yellow outline-none transition-all"
+                        />
+                        <button 
+                          onClick={() => startWave(parseInt(modWaveInput))}
+                          className="bg-accent-yellow text-black px-4 py-1.5 rounded-lg text-xs font-black hover:scale-105 active:scale-95 transition-all"
+                        >
+                          GO
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Spawn Zombie */}
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-[10px] text-danger-red font-black uppercase">{t('spawnZombie')}</span>
+                      <div className="grid grid-cols-2 gap-1 mb-1">
+                        <select 
+                          value={modSpawnType}
+                          onChange={(e) => setModSpawnType(e.target.value as any)}
+                          className="bg-black/60 border border-white/10 rounded-md p-1 text-[10px] text-white outline-none"
+                        >
+                          {Object.keys(ZOMBIE_TYPES).map(type => (
+                            <option key={type} value={type}>{type}</option>
+                          ))}
+                        </select>
+                        <select 
+                          value={modSpawnLane}
+                          onChange={(e) => setModSpawnLane(parseInt(e.target.value))}
+                          className="bg-black/60 border border-white/10 rounded-md p-1 text-[10px] text-white outline-none"
+                        >
+                          {[0, 1, 2, 3, 4].map(l => (
+                            <option key={l} value={l}>{t('lane')} {l+1}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <button 
+                        onClick={() => {
+                          const newZ = getZombieData(modSpawnType, modSpawnLane);
+                          setZombies(prev => [...prev, newZ]);
+                        }}
+                        className="bg-danger-red/80 hover:bg-danger-red text-white py-1.5 rounded-lg text-[10px] font-black transition-all"
+                      >
+                        SPAWN
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -2176,20 +4115,44 @@ export default function App() {
                 <div className="flex justify-center gap-4 mb-6">
                   <button 
                     onClick={() => setAlmanacTab('units')}
-                    className={`px-8 py-3 rounded-xl font-black uppercase transition-all ${almanacTab === 'units' ? 'bg-[#FFE082] text-[#3B2D21]' : 'bg-[#3B2D21] text-white/50'}`}
+                    className={`px-6 py-3 rounded-xl font-black uppercase transition-all ${almanacTab === 'units' ? 'bg-[#FFE082] text-[#3B2D21]' : 'bg-[#3B2D21] text-white/50'}`}
                   >
                     {t('unitsTab')}
                   </button>
                   <button 
                     onClick={() => setAlmanacTab('zombies')}
-                    className={`px-8 py-3 rounded-xl font-black uppercase transition-all ${almanacTab === 'zombies' ? 'bg-[#FFE082] text-[#3B2D21]' : 'bg-[#3B2D21] text-white/50'}`}
+                    className={`px-6 py-3 rounded-xl font-black uppercase transition-all ${almanacTab === 'zombies' ? 'bg-[#FFE082] text-[#3B2D21]' : 'bg-[#3B2D21] text-white/50'}`}
                   >
                     {t('zombiesTab')}
+                  </button>
+                  <button 
+                    onClick={() => setAlmanacTab('attributes')}
+                    className={`px-6 py-3 rounded-xl font-black uppercase transition-all ${almanacTab === 'attributes' ? 'bg-[#FFE082] text-[#3B2D21]' : 'bg-[#3B2D21] text-white/50'}`}
+                  >
+                    {t('attributesTab')}
                   </button>
                 </div>
 
                 <div className="bg-[#FFE082]/10 rounded-3xl p-6 border-4 border-[#3B2D21] mb-8 overflow-y-auto flex-grow">
-                  {almanacTab === 'zombies' ? (
+                  {almanacTab === 'attributes' ? (
+                    <div className="grid grid-cols-1 gap-6">
+                      {[
+                        { name: t('attrBloated'), desc: t('attrBloatedDesc'), color: 'text-orange-400', victims: 'Normal, Speedy, Slow' },
+                        { name: t('attrTank'), desc: t('attrTankDesc'), color: 'text-gray-400', victims: 'Speedy, Slow' },
+                        { name: t('attrNimble'), desc: t('attrNimbleDesc'), color: 'text-yellow-400', victims: 'Slow' },
+                        { name: t('attrRegen'), desc: t('attrRegenDesc'), color: 'text-green-400', victims: 'Slow' },
+                        { name: t('attrBoss'), desc: t('attrBossDesc'), color: 'text-purple-400', victims: 'Normal Boss' }
+                      ].map((attr, i) => (
+                        <div key={i} className="bg-[#3B2D21]/50 p-6 rounded-2xl border-2 border-[#3B2D21]">
+                          <div className="flex justify-between items-start mb-2">
+                            <h4 className={`text-2xl font-black uppercase ${attr.color}`}>{attr.name}</h4>
+                            <span className="text-[10px] bg-white/10 px-2 py-1 rounded-full text-white/60">{t('victims')}: {attr.victims}</span>
+                          </div>
+                          <p className="text-white/80 text-sm italic">{attr.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : almanacTab === 'zombies' ? (
                     <div className="flex flex-col gap-12">
                       {Object.entries(ZOMBIE_TYPES).map(([key, type]) => (
                         <div key={key} className="flex gap-8 items-start border-b border-[#3B2D21] pb-8 last:border-0">
@@ -2197,35 +4160,40 @@ export default function App() {
                             <img 
                               src={key === 'NORMAL' 
                                 ? "/Enemys/Normal/NormalAnim1.webp" 
-                                : key === 'SPEEDY' 
-                                ? "/Enemys/Normal/Speedy/SpeedyAnim1.webp" 
-                                : "/Enemys/Normal/NormalAnim3.webp"
+                                : key === 'SPEEDY'
+                                ? "/Enemys/Normal/Speedy/SpeedyAnim1.webp"
+                                : key === 'SLOW'
+                                ? "/Enemys/Normal/Slow/SlowAnim1.webp"
+                                : key === 'HIDDEN'
+                                ? "/Enemys/Normal/Hidden/HiddenV5.webp"
+                                : (type as any).image || "/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/EasyModeNormalBoss.webp"
                               } 
                               alt={type.name} 
-                              className={`w-full h-full object-contain ${key === 'SPEEDY' ? 'brightness-125 saturate-150 scale-x-[-1]' : key === 'TANK' ? 'brightness-50 contrast-125' : ''}`}
+                              className={`w-full h-full object-contain ${key === 'SPEEDY' ? 'brightness-125 saturate-150 scale-x-[-1]' : ''}`}
                               referrerPolicy="no-referrer"
                             />
-                            {key === 'SPEEDY' && <div className="absolute top-2 right-2 text-xl animate-pulse">⚡</div>}
-                            {key === 'TANK' && <div className="absolute bottom-1 text-[10px] font-bold text-danger-red uppercase">Armored</div>}
+                            {key === 'SPEEDY' && (
+                              <div className="absolute top-2 right-2 text-xl animate-pulse">⚡</div>
+                            )}
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-3xl font-black text-white uppercase mb-2">{t('zombieName')}: {type.name}</h3>
-                            <p className="text-[#FFE082] italic mb-4">"{type.description}"</p>
+                            <h3 className="text-3xl font-black text-white uppercase mb-2">{t('zombieName')}: {t(type.name)}</h3>
+                            <p className="text-[#FFE082] italic mb-4">"{t(type.description)}"</p>
                             <div className="grid grid-cols-2 gap-4">
                               <div className="bg-[#3B2D21]/50 p-3 rounded-xl border-2 border-[#3B2D21]">
-                                <p className="text-xs text-white/50 uppercase font-bold">Resistenza</p>
+                                <p className="text-xs text-white/50 uppercase font-bold">{t('health')}</p>
                                 <p className="text-xl font-bold text-danger-red">{type.baseHp} HP</p>
                               </div>
                               <div className="bg-[#3B2D21]/50 p-3 rounded-xl border-2 border-[#3B2D21]">
-                                <p className="text-xs text-white/50 uppercase font-bold">Velocità</p>
+                                <p className="text-xs text-white/50 uppercase font-bold">{t('firerate')}</p>
                                 <p className="text-xl font-bold text-accent-yellow">{type.speedPerGrid}s/m</p>
                               </div>
                               <div className="bg-[#3B2D21]/50 p-3 rounded-xl border-2 border-[#3B2D21]">
-                                <p className="text-xs text-white/50 uppercase font-bold">Danno</p>
-                                <p className="text-xl font-bold text-orange-400">{type.damage}/morso</p>
+                                <p className="text-xs text-white/50 uppercase font-bold">{t('damage')}</p>
+                                <p className="text-xl font-bold text-orange-400">{type.damage}/hit</p>
                               </div>
                               <div className="bg-[#3B2D21]/50 p-3 rounded-xl border-2 border-[#3B2D21]">
-                                <p className="text-xs text-white/50 uppercase font-bold">Ricompensa</p>
+                                <p className="text-xs text-white/50 uppercase font-bold">{t('reward')}</p>
                                 <p className="text-xl font-bold text-money-green">${type.reward}</p>
                               </div>
                             </div>
@@ -2251,12 +4219,12 @@ export default function App() {
                                     <img src={lvl.appearance} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
                                   </div>
                                   <div>
-                                    <p className="text-xs font-black text-[#FFE082]">LIVELLO {index}</p>
-                                    <p className="text-[10px] text-white/60">{lvl.name}</p>
+                                    <p className="text-xs font-black text-[#FFE082] uppercase">{t('level')} {index}</p>
+                                    <p className="text-[10px] text-white/80 font-bold">{lvl.name}</p>
                                   </div>
                                 </div>
                                 <div className="text-right">
-                                  <p className="text-[10px] font-bold text-white/40 uppercase">Produzione</p>
+                                  <p className="text-[10px] font-bold text-white/40 uppercase">{t('production')}</p>
                                   <p className="text-lg font-black text-money-green">${lvl.production}</p>
                                 </div>
                               </div>
@@ -2281,13 +4249,14 @@ export default function App() {
                                      <img src={lvl.appearance} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
                                    </div>
                                    <div>
-                                     <p className="text-xs font-black text-[#FFE082]">LIVELLO {index}</p>
-                                     {index > 0 && <p className="text-[10px] text-white/60">{lvl.description}</p>}
+                                     <p className="text-xs font-black text-[#FFE082] uppercase">{t('level')} {index}</p>
+                                     <p className="text-[10px] text-white/80 font-bold">{lvl.name}</p>
+                                     <p className="text-[9px] text-white/50">{lvl.description}</p>
                                    </div>
                                  </div>
                                  <div className="text-right">
-                                   <p className="text-[11px] font-black text-white/80 uppercase">Danni: {lvl.damage}</p>
-                                   <p className="text-[11px] font-black text-white/80 uppercase">Velocità: {(1000/lvl.interval).toFixed(1)}/s</p>
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('damage')}: {lvl.damage}</p>
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('firerate')}: {(1000/lvl.interval).toFixed(1)}/s</p>
                                    {lvl.hasHiddenDetection && <p className="text-[10px] font-black text-accent-yellow italic mt-1 leading-none">Hidden Detection</p>}
                                  </div>
                                </div>
@@ -2312,14 +4281,247 @@ export default function App() {
                                      <img src={lvl.appearance} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
                                    </div>
                                    <div>
-                                     <p className="text-xs font-black text-[#FFE082]">LIVELLO {index}</p>
-                                     {index > 0 && <p className="text-[10px] text-white/60">{lvl.description}</p>}
+                                     <p className="text-xs font-black text-[#FFE082] uppercase">{t('level')} {index}</p>
+                                     <p className="text-[10px] text-white/80 font-bold">{lvl.name}</p>
+                                     <p className="text-[9px] text-white/50">{lvl.description}</p>
                                    </div>
                                  </div>
                                  <div className="text-right">
-                                   <p className="text-[11px] font-black text-white/80 uppercase">Danni: {lvl.damage}</p>
-                                   <p className="text-[11px] font-black text-white/80 uppercase">Velocità: {(1000/lvl.interval).toFixed(1)}/s</p>
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('damage')}: {lvl.damage}</p>
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('firerate')}: {(1000/lvl.interval).toFixed(1)}/s</p>
                                    {lvl.hasHiddenDetection && <p className="text-[10px] font-black text-accent-yellow italic mt-1 leading-none">Hidden Detection</p>}
+                                 </div>
+                               </div>
+                             ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Paintballer */}
+                      <div className="flex gap-8 items-start border-t border-[#3B2D21] pt-8">
+                        <div className="w-32 h-32 bg-[#e67e22]/30 rounded-2xl flex items-center justify-center border-4 border-[#3B2D21] p-4 relative">
+                          <img src={PAINTBALLER_LEVELS[0].appearance} alt="Paintballer" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-3xl font-black text-white uppercase mb-2">{t('paintballerName')}</h3>
+                          <p className="text-[#FFE082] italic mb-4">{t('paintballerDesc')}</p>
+                          <div className="grid grid-cols-1 gap-4">
+                             {PAINTBALLER_LEVELS.map((lvl, index) => (
+                               <div key={index} className="bg-[#3B2D21]/50 p-3 rounded-xl border border-[#3B2D21] flex justify-between items-center">
+                                 <div className="flex items-center gap-3">
+                                   <div className="w-8 h-8 bg-black/30 rounded overflow-hidden">
+                                     <img src={lvl.appearance} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                                   </div>
+                                   <div>
+                                     <p className="text-xs font-black text-[#FFE082] uppercase">{t('level')} {index}</p>
+                                     <p className="text-[10px] text-white/80 font-bold">{lvl.name}</p>
+                                     <p className="text-[9px] text-white/50">{lvl.description}</p>
+                                   </div>
+                                 </div>
+                                 <div className="text-right">
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('damage')}: {lvl.damage}</p>
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('firerate')}: {(1000/lvl.interval).toFixed(1)}/s</p>
+                                   <p className="text-[10px] text-white/40 uppercase font-black">Splash: {lvl.splashRange}</p>
+                                   {lvl.hasHiddenDetection && <p className="text-[10px] font-black text-accent-yellow italic mt-1 leading-none">Hidden Detection</p>}
+                                 </div>
+                               </div>
+                             ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Soldier */}
+                      <div className="flex gap-8 items-start border-t border-[#3B2D21] pt-8">
+                        <div className="w-32 h-32 bg-[#27ae60]/30 rounded-2xl flex items-center justify-center border-4 border-[#3B2D21] p-4 relative">
+                          <img src={SOLDIER_LEVELS[0].appearance} alt="Soldier" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-3xl font-black text-white uppercase mb-2">{t('soldierName')}</h3>
+                          <p className="text-[#FFE082] italic mb-4">{t('soldierDesc')}</p>
+                          <div className="grid grid-cols-1 gap-4">
+                             {SOLDIER_LEVELS.map((lvl, index) => (
+                               <div key={index} className="bg-[#3B2D21]/50 p-3 rounded-xl border border-[#3B2D21] flex justify-between items-center">
+                                 <div className="flex items-center gap-3">
+                                   <div className="w-8 h-8 bg-black/30 rounded overflow-hidden">
+                                     <img src={lvl.appearance} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                                   </div>
+                                   <div>
+                                     <p className="text-xs font-black text-[#FFE082] uppercase">{t('level')} {index}</p>
+                                     <p className="text-[10px] text-white/80 font-bold">{lvl.name}</p>
+                                     <p className="text-[9px] text-white/50">{lvl.description}</p>
+                                   </div>
+                                 </div>
+                                 <div className="text-right">
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('damage')}: {lvl.damage}</p>
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('firerate')}: {(1000/lvl.interval).toFixed(1)}/s (Burst: {lvl.burstCount})</p>
+                                   {lvl.hasHiddenDetection && <p className="text-[10px] font-black text-accent-yellow italic mt-1 leading-none">Hidden Detection</p>}
+                                   {lvl.hasFlyingDetection && <p className="text-[10px] font-black text-blue-300 italic mt-1 leading-none">Flying Detection</p>}
+                                 </div>
+                               </div>
+                             ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Shotgunner */}
+                      <div className="flex gap-8 items-start border-t border-[#3B2D21] pt-8">
+                        <div className="w-32 h-32 bg-[#f1c40f]/30 rounded-2xl flex items-center justify-center border-4 border-[#3B2D21] p-4 relative">
+                          <img src={SHOTGUNNER_LEVELS[0].appearance} alt="Shotgunner" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-3xl font-black text-white uppercase mb-2">{t('shotgunnerName')}</h3>
+                          <p className="text-[#FFE082] italic mb-4">{t('shotgunnerDesc')}</p>
+                          <div className="grid grid-cols-1 gap-4">
+                             {SHOTGUNNER_LEVELS.map((lvl, index) => (
+                               <div key={index} className="bg-[#3B2D21]/50 p-3 rounded-xl border border-[#3B2D21] flex justify-between items-center">
+                                 <div className="flex items-center gap-3">
+                                   <div className="w-8 h-8 bg-black/30 rounded overflow-hidden">
+                                     <img src={lvl.appearance} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                                   </div>
+                                   <div>
+                                     <p className="text-xs font-black text-[#FFE082] uppercase">{t('level')} {index}</p>
+                                     <p className="text-[10px] text-white/80 font-bold">{lvl.name}</p>
+                                     <p className="text-[9px] text-white/50">{lvl.description}</p>
+                                   </div>
+                                 </div>
+                                 <div className="text-right">
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('damage')}: {lvl.damage} x {lvl.bullets}</p>
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('range')}: {(lvl.range/100).toFixed(2)} tiles</p>
+                                   {lvl.hasHiddenDetection && <p className="text-[10px] font-black text-accent-yellow italic mt-1 leading-none">Hidden Detection</p>}
+                                   {lvl.hasLeadDetection && <p className="text-[10px] font-black text-slate-300 italic mt-1 leading-none">Lead Detection</p>}
+                                 </div>
+                               </div>
+                             ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Demoman */}
+                      <div className="flex gap-8 items-start border-t border-[#3B2D21] pt-8">
+                        <div className="w-32 h-32 bg-[#c0392b]/30 rounded-2xl flex items-center justify-center border-4 border-[#3B2D21] p-4 relative">
+                          <img src={DEMOMAN_LEVELS[0].appearance} alt="Demoman" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-3xl font-black text-white uppercase mb-2">{t('demomanName')}</h3>
+                          <p className="text-[#FFE082] italic mb-4">{t('demomanDesc')}</p>
+                          <div className="grid grid-cols-1 gap-4">
+                             {DEMOMAN_LEVELS.map((lvl, index) => (
+                               <div key={index} className="bg-[#3B2D21]/50 p-3 rounded-xl border border-[#3B2D21] flex justify-between items-center">
+                                 <div className="flex items-center gap-3">
+                                   <div className="w-8 h-8 bg-black/30 rounded overflow-hidden">
+                                     <img src={lvl.appearance} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                                   </div>
+                                   <div>
+                                     <p className="text-xs font-black text-[#FFE082] uppercase">{t('level')} {index}</p>
+                                     <p className="text-[10px] text-white/80 font-bold">{lvl.name}</p>
+                                     <p className="text-[9px] text-white/50">{lvl.description}</p>
+                                   </div>
+                                 </div>
+                                 <div className="text-right">
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('damage')}: {lvl.damage}</p>
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('firerate')}: {(1000/lvl.interval).toFixed(1)}/s</p>
+                                   <p className="text-[10px] text-white/40 uppercase font-black">Splash: {lvl.splashRange}</p>
+                                   {lvl.hasHiddenDetection && <p className="text-[10px] font-black text-accent-yellow italic mt-1 leading-none">Hidden Detection</p>}
+                                   {lvl.hasLeadDetection && <p className="text-[10px] font-black text-slate-300 italic mt-1 leading-none">Lead Detection</p>}
+                                 </div>
+                               </div>
+                             ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Freezer */}
+                      <div className="flex gap-8 items-start border-t border-[#3B2D21] pt-8">
+                        <div className="w-32 h-32 bg-[#3498db]/30 rounded-2xl flex items-center justify-center border-4 border-[#3B2D21] p-4 relative">
+                          <img src={FREEZER_LEVELS[0].appearance} alt="Freezer" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-3xl font-black text-white uppercase mb-2">{t('freezerName')}</h3>
+                          <p className="text-[#FFE082] italic mb-4">{t('freezerDesc')}</p>
+                          <div className="grid grid-cols-1 gap-4">
+                             {FREEZER_LEVELS.map((lvl, index) => (
+                               <div key={index} className="bg-[#3B2D21]/50 p-3 rounded-xl border border-[#3B2D21] flex justify-between items-center">
+                                 <div className="flex items-center gap-3">
+                                   <div className="w-8 h-8 bg-black/30 rounded overflow-hidden">
+                                     <img src={lvl.appearance} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                                   </div>
+                                   <div>
+                                     <p className="text-xs font-black text-[#FFE082] uppercase">{t('level')} {index}</p>
+                                     <p className="text-[10px] text-white/80 font-bold">{lvl.name}</p>
+                                     <p className="text-[9px] text-white/50">{lvl.description}</p>
+                                   </div>
+                                 </div>
+                                 <div className="text-right">
+                                   <p className="text-[11px] font-black text-white/80 uppercase">Chill: {((lvl as any).maxSlow * 100).toFixed(0)}%</p>
+                                   <p className="text-[11px] font-black text-white/80 uppercase">Freeze: {(lvl as any).freezeDuration ? (lvl as any).freezeDuration / 1000 : 0}s</p>
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('firerate')}: {(1000/lvl.interval).toFixed(1)}/s</p>
+                                   {lvl.hasHiddenDetection && <p className="text-[10px] font-black text-accent-yellow italic mt-1 leading-none">Hidden Detection</p>}
+                                 </div>
+                               </div>
+                             ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Assassin */}
+                      <div className="flex gap-8 items-start border-t border-[#3B2D21] pt-8">
+                        <div className="w-32 h-32 bg-[#e74c3c]/30 rounded-2xl flex items-center justify-center border-4 border-[#3B2D21] p-4 relative">
+                          <img src={ASSASSIN_LEVELS[0].appearance} alt="Assassin" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-3xl font-black text-white uppercase mb-2">{t('assassinName')}</h3>
+                          <p className="text-[#FFE082] italic mb-4">{t('assassinDesc')}</p>
+                          <div className="grid grid-cols-1 gap-4">
+                             {ASSASSIN_LEVELS.map((lvl, index) => (
+                               <div key={index} className="bg-[#3B2D21]/50 p-3 rounded-xl border border-[#3B2D21] flex justify-between items-center">
+                                 <div className="flex items-center gap-3">
+                                   <div className="w-8 h-8 bg-black/30 rounded overflow-hidden">
+                                     <img src={lvl.appearance} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                                   </div>
+                                   <div>
+                                     <p className="text-xs font-black text-[#FFE082] uppercase">{t('level')} {index}</p>
+                                     <p className="text-[10px] text-white/80 font-bold">{lvl.name}</p>
+                                     <p className="text-[9px] text-white/50">{lvl.description}</p>
+                                   </div>
+                                 </div>
+                                 <div className="text-right">
+                                   {lvl.damage > 0 && <p className="text-[11px] font-black text-white/80 uppercase">{t('damage')}: {lvl.damage}</p>}
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('firerate')}: {(1000/lvl.interval).toFixed(2)}s</p>
+                                   {lvl.hasHiddenDetection && <p className="text-[10px] font-black text-accent-yellow italic mt-1 leading-none">Hidden Detection</p>}
+                                   {lvl.hasLeadDetection && <p className="text-[10px] font-black text-accent-yellow italic mt-1 leading-none">Lead Detection</p>}
+                                 </div>
+                               </div>
+                             ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Militant */}
+                      <div className="flex gap-8 items-start border-t border-[#3B2D21] pt-8">
+                        <div className="w-32 h-32 bg-[#34495e]/30 rounded-2xl flex items-center justify-center border-4 border-[#3B2D21] p-4 relative">
+                          <img src={MILITANT_LEVELS[0].appearance} alt="Militant" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="text-3xl font-black text-white uppercase mb-2">{t('militantName')}</h3>
+                          <p className="text-[#FFE082] italic mb-4">{t('militantDesc')}</p>
+                          <div className="grid grid-cols-1 gap-4">
+                             {MILITANT_LEVELS.map((lvl, index) => (
+                               <div key={index} className="bg-[#3B2D21]/50 p-3 rounded-xl border border-[#3B2D21] flex justify-between items-center">
+                                 <div className="flex items-center gap-3">
+                                   <div className="w-8 h-8 bg-black/30 rounded overflow-hidden">
+                                     <img src={lvl.appearance} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                                   </div>
+                                   <div>
+                                     <p className="text-xs font-black text-[#FFE082] uppercase">{t('level')} {index}</p>
+                                     <p className="text-[10px] text-white/80 font-bold">{lvl.name}</p>
+                                     <p className="text-[9px] text-white/50">{lvl.description}</p>
+                                   </div>
+                                 </div>
+                                 <div className="text-right">
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('damage')}: {lvl.damage}</p>
+                                   <p className="text-[11px] font-black text-white/80 uppercase">{t('firerate')}: {(1000/lvl.interval).toFixed(1)}/s</p>
+                                   {lvl.hasHiddenDetection && <p className="text-[10px] font-black text-accent-yellow italic mt-1 leading-none">Hidden Detection</p>}
+                                   {lvl.hasFlyingDetection && <p className="text-[10px] font-black text-blue-300 italic mt-1 leading-none">Flying Detection</p>}
                                  </div>
                                </div>
                              ))}
