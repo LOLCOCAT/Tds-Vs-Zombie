@@ -36,57 +36,57 @@ function getLevels(type: UnitType) {
 }
 
 const ALL_UNIT_TYPES: { type: UnitType; nameKey: string; icon: string }[] = [
-  { type: 'scout', nameKey: 'scoutName', icon: '/Scout/Appearance/LO_Scout_0.webp' },
-  { type: 'sniper', nameKey: 'sniperName', icon: '/Sniper/Appearance/DHDefaultSniper0.webp' },
-  { type: 'demoman', nameKey: 'demomanName', icon: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman0.webp' },
-  { type: 'farm', nameKey: 'farmName', icon: '/Farm/Appearance/Farm0.webp' },
-  { type: 'paintballer', nameKey: 'paintballerName', icon: '/PaintBALLER/Appearance/DHDefaultPaintballer0.webp' },
-  { type: 'soldier', nameKey: 'soldierName', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_0.webp' },
-  { type: 'shotgunner', nameKey: 'shotgunnerName', icon: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl0.webp' },
-  { type: 'freezer', nameKey: 'freezerName', icon: '/Freezer/Appearance/KRFreezer0.webp' },
-  { type: 'assassin', nameKey: 'assassinName', icon: '/Assassin/Aspect/AssassinLevel0.webp' },
-  { type: 'militant', nameKey: 'militantName', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel0.webp' },
+  { type: 'scout', nameKey: 'scoutName', icon: '/Units/Scout/Appearance/LO_Scout_0.webp' },
+  { type: 'sniper', nameKey: 'sniperName', icon: '/Units/Sniper/Appearance/DHDefaultSniper0.webp' },
+  { type: 'demoman', nameKey: 'demomanName', icon: '/Units/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman0.webp' },
+  { type: 'farm', nameKey: 'farmName', icon: '/Units/Farm/Appearance/Farm0.webp' },
+  { type: 'paintballer', nameKey: 'paintballerName', icon: '/Units/PaintBALLER/Appearance/DHDefaultPaintballer0.webp' },
+  { type: 'soldier', nameKey: 'soldierName', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_0.webp' },
+  { type: 'shotgunner', nameKey: 'shotgunnerName', icon: '/Units/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl0.webp' },
+  { type: 'freezer', nameKey: 'freezerName', icon: '/Units/Freezer/Appearance/KRFreezer0.webp' },
+  { type: 'assassin', nameKey: 'assassinName', icon: '/Units/Assassin/Aspect/AssassinLevel0.webp' },
+  { type: 'militant', nameKey: 'militantName', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel0.webp' },
 ];
 
 const DEMOMAN_LEVELS = [
-  { level: 0, cost: 550, upgradeCost: 225, hp: 100, damage: 6, interval: 2425, sellPrice: 183, splashRange: 0.83, hasHiddenDetection: false, hasLeadDetection: true, name: 'Demoman', appearance: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman0.webp', icon: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman0.webp', description: 'Splash: 0.83 | Interval: 2.425s | Lead Detection' },
-  { level: 1, cost: 0, upgradeCost: 800, hp: 100, damage: 6, interval: 1775, sellPrice: 258, splashRange: 0.83, hasHiddenDetection: false, hasLeadDetection: true, name: 'Faster Throwing', appearance: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman1.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Demoman_Upgrade_1_New.webp', description: 'Interval: 1.775s (-0.65s)' },
-  { level: 2, cost: 0, upgradeCost: 2325, hp: 100, damage: 12, interval: 1775, sellPrice: 525, splashRange: 0.875, hasHiddenDetection: false, hasLeadDetection: true, name: 'Ullapool Caber', appearance: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman2.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Demoman_Upgrade_2.webp', description: 'Damage: 12 (+6) | Splash: 0.875' },
-  { level: 3, cost: 0, upgradeCost: 5750, hp: 100, damage: 25, interval: 1525, sellPrice: 1300, splashRange: 0.875, hasHiddenDetection: true, hasLeadDetection: true, name: 'Loch-n-Load', appearance: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman3.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Demoman_Upgrade_3.webp', description: 'Damage: 25 (+13) | Interval: 1.525s | +Hidden Detection' },
-  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 50, interval: 1325, sellPrice: 3216, splashRange: 1.0, hasHiddenDetection: true, hasLeadDetection: true, name: "Expert's Ordnance", appearance: '/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman4.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/NewDemomanLevel4.webp', description: 'Damage: 50 (+25) | Interval: 1.325s | Splash: 1.0' },
+  { level: 0, cost: 550, upgradeCost: 225, hp: 100, damage: 6, interval: 2425, sellPrice: 183, splashRange: 0.83, hasHiddenDetection: false, hasLeadDetection: true, name: 'Demoman', appearance: '/Units/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman0.webp', icon: '/Units/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman0.webp', description: 'Splash: 0.83 | Interval: 2.425s | Lead Detection' },
+  { level: 1, cost: 0, upgradeCost: 800, hp: 100, damage: 6, interval: 1775, sellPrice: 258, splashRange: 0.83, hasHiddenDetection: false, hasLeadDetection: true, name: 'Faster Throwing', appearance: '/Units/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman1.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Demoman_Upgrade_1_New.webp', description: 'Interval: 1.775s (-0.65s)' },
+  { level: 2, cost: 0, upgradeCost: 2325, hp: 100, damage: 12, interval: 1775, sellPrice: 525, splashRange: 0.875, hasHiddenDetection: false, hasLeadDetection: true, name: 'Ullapool Caber', appearance: '/Units/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman2.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Demoman_Upgrade_2.webp', description: 'Damage: 12 (+6) | Splash: 0.875' },
+  { level: 3, cost: 0, upgradeCost: 5750, hp: 100, damage: 25, interval: 1525, sellPrice: 1300, splashRange: 0.875, hasHiddenDetection: true, hasLeadDetection: true, name: 'Loch-n-Load', appearance: '/Units/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman3.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Demoman_Upgrade_3.webp', description: 'Damage: 25 (+13) | Interval: 1.525s | +Hidden Detection' },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 50, interval: 1325, sellPrice: 3216, splashRange: 1.0, hasHiddenDetection: true, hasLeadDetection: true, name: "Expert's Ordnance", appearance: '/Units/Sniper/Sound/Demoman/Appearance/M23DefaultDemoman4.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/NewDemomanLevel4.webp', description: 'Damage: 50 (+25) | Interval: 1.325s | Splash: 1.0' },
 ];
 
 const SOLDIER_LEVELS = [
-  { level: 0, cost: 400, upgradeCost: 50, hp: 100, damage: 1, interval: 175, burstCount: 3, cooldown: 550, sellPrice: 133, name: 'Soldier', appearance: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_0.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_0.webp', description: 'Burst: 3 shots | 1 Damage', hasHiddenDetection: false, hasFlyingDetection: false },
-  { level: 1, cost: 0, upgradeCost: 650, hp: 100, damage: 1, interval: 150, burstCount: 3, cooldown: 550, sellPrice: 150, name: 'Barracks Training', appearance: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_1.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Upgrade_icon/Soldier_Upgrade_1_New.webp', description: 'Firerate: 0.175s > 0.15s', hasHiddenDetection: false, hasFlyingDetection: false },
-  { level: 2, cost: 0, upgradeCost: 1350, hp: 100, damage: 2, interval: 150, burstCount: 4, cooldown: 550, sellPrice: 366, name: 'Better Aiming', appearance: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_2.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Upgrade_icon/Soldier_Upgrade_2_New.webp', description: '+1 Damage | Burst: 4 | +Hidden', hasHiddenDetection: true, hasFlyingDetection: false },
-  { level: 3, cost: 0, upgradeCost: 5000, hp: 100, damage: 3, interval: 150, burstCount: 8, cooldown: 400, sellPrice: 783, name: 'Equipment Upgrades', appearance: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_3.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Upgrade_icon/Soldier_Upgrade_4_New.webp', description: '+1 Damage | Burst: 8 | Cooldown: 0.4s', hasHiddenDetection: true, hasFlyingDetection: false },
-  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 8, interval: 150, burstCount: 12, cooldown: 400, sellPrice: 2450, name: 'Deadliest Soldier', appearance: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_4.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Upgrade_icon/Soldier_Upgrade_5_New.webp', description: '+5 Damage | Burst: 12 | +Flying Detection', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 0, cost: 400, upgradeCost: 50, hp: 100, damage: 1, interval: 175, burstCount: 3, cooldown: 550, sellPrice: 133, name: 'Soldier', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_0.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_0.webp', description: 'Burst: 3 shots | 1 Damage', hasHiddenDetection: false, hasFlyingDetection: false },
+  { level: 1, cost: 0, upgradeCost: 650, hp: 100, damage: 1, interval: 150, burstCount: 3, cooldown: 550, sellPrice: 150, name: 'Barracks Training', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_1.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Upgrade_icon/Soldier_Upgrade_1_New.webp', description: 'Firerate: 0.175s > 0.15s', hasHiddenDetection: false, hasFlyingDetection: false },
+  { level: 2, cost: 0, upgradeCost: 1350, hp: 100, damage: 2, interval: 150, burstCount: 4, cooldown: 550, sellPrice: 366, name: 'Better Aiming', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_2.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Upgrade_icon/Soldier_Upgrade_2_New.webp', description: '+1 Damage | Burst: 4 | +Hidden', hasHiddenDetection: true, hasFlyingDetection: false },
+  { level: 3, cost: 0, upgradeCost: 5000, hp: 100, damage: 3, interval: 150, burstCount: 8, cooldown: 400, sellPrice: 783, name: 'Equipment Upgrades', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_3.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Upgrade_icon/Soldier_Upgrade_4_New.webp', description: '+1 Damage | Burst: 8 | Cooldown: 0.4s', hasHiddenDetection: true, hasFlyingDetection: false },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 8, interval: 150, burstCount: 12, cooldown: 400, sellPrice: 2450, name: 'Deadliest Soldier', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Appearance/KR_Soldier_4.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Upgrade_icon/Soldier_Upgrade_5_New.webp', description: '+5 Damage | Burst: 12 | +Flying Detection', hasHiddenDetection: true, hasFlyingDetection: true },
 ];
 
 const MILITANT_LEVELS = [
-  { level: 0, cost: 600, upgradeCost: 300, hp: 100, damage: 1, interval: 225, sellPrice: 200, name: 'Militant', appearance: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel0.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel0.webp', description: 'Single Damage: 1 | Interval: 0.225s', hasHiddenDetection: false, hasFlyingDetection: false },
-  { level: 1, cost: 0, upgradeCost: 850, hp: 100, damage: 1, interval: 175, sellPrice: 300, name: 'Radio Comms', appearance: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel1.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel1.webp', description: 'Interval: 0.175s | +Hidden/Flying', hasHiddenDetection: true, hasFlyingDetection: true },
-  { level: 2, cost: 0, upgradeCost: 2750, hp: 100, damage: 2, interval: 175, sellPrice: 583, name: 'Field Ops', appearance: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel2.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel2.webp', description: 'Damage: 2 (+1)', hasHiddenDetection: true, hasFlyingDetection: true },
-  { level: 3, cost: 0, upgradeCost: 8000, hp: 100, damage: 5, interval: 175, sellPrice: 1500, name: 'Guerrilla Tactics', appearance: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel3.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel3.webp', description: 'Damage: 5 (+3)', hasHiddenDetection: true, hasFlyingDetection: true },
-  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 12, interval: 175, sellPrice: 4166, name: 'Stealth Mercenary', appearance: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel4.webp', icon: '/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel4.webp', description: 'Damage: 12 (+7)', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 0, cost: 600, upgradeCost: 300, hp: 100, damage: 1, interval: 225, sellPrice: 200, name: 'Militant', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel0.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel0.webp', description: 'Single Damage: 1 | Interval: 0.225s', hasHiddenDetection: false, hasFlyingDetection: false },
+  { level: 1, cost: 0, upgradeCost: 850, hp: 100, damage: 1, interval: 175, sellPrice: 300, name: 'Radio Comms', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel1.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel1.webp', description: 'Interval: 0.175s | +Hidden/Flying', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 2, cost: 0, upgradeCost: 2750, hp: 100, damage: 2, interval: 175, sellPrice: 583, name: 'Field Ops', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel2.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel2.webp', description: 'Damage: 2 (+1)', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 3, cost: 0, upgradeCost: 8000, hp: 100, damage: 5, interval: 175, sellPrice: 1500, name: 'Guerrilla Tactics', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel3.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel3.webp', description: 'Damage: 5 (+3)', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 12, interval: 175, sellPrice: 4166, name: 'Stealth Mercenary', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel4.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel4.webp', description: 'Damage: 12 (+7)', hasHiddenDetection: true, hasFlyingDetection: true },
 ];
 
 const SNIPER_LEVELS = [
-  { level: 0, cost: 450, upgradeCost: 200, hp: 100, damage: 10, interval: 5008, sellPrice: 150, hasHiddenDetection: false, hasLeadDetection: false, hasFlyingDetection: true, name: 'Sniper', appearance: '/Sniper/Appearance/DHDefaultSniper0.webp', icon: '/Sniper/Appearance/DHDefaultSniper0.webp', description: 'Attack: 10 | Interval: 5.0s | High range' },
-  { level: 1, cost: 0, upgradeCost: 750, hp: 100, damage: 12, interval: 4008, sellPrice: 216, hasHiddenDetection: false, hasLeadDetection: false, hasFlyingDetection: true, name: 'Faster Reloading', appearance: '/Sniper/Appearance/DHDefaultSniper1.webp', icon: '/Sniper/Upgrade_icon/Common1Image.webp', description: 'Attack: 12 (+2) | Interval: 4.0s' },
-  { level: 2, cost: 0, upgradeCost: 2250, hp: 100, damage: 25, interval: 4008, sellPrice: 466, hasHiddenDetection: true, hasLeadDetection: false, hasFlyingDetection: true, name: 'Geared Up', appearance: '/Sniper/Appearance/DHDefaultSniper2.webp', icon: '/Sniper/Upgrade_icon/Sniper2.webp', description: 'Attack: 25 (+13) | +Hidden Detection' },
-  { level: 3, cost: 0, upgradeCost: 4500, hp: 100, damage: 60, interval: 4008, sellPrice: 1216, hasHiddenDetection: true, hasLeadDetection: true, hasFlyingDetection: true, name: 'Frontlines Sniping', appearance: '/Sniper/Appearance/DHDefaultSniper3.webp', icon: '/Sniper/Upgrade_icon/Sniper3.webp', description: 'Attack: 60 (+35) | +Lead Detection' },
-  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 100, interval: 3508, sellPrice: 2716, hasHiddenDetection: true, hasLeadDetection: true, hasFlyingDetection: true, name: 'Spec Ops', appearance: '/Sniper/Appearance/DHDefaultSniper4.webp', icon: '/Sniper/Upgrade_icon/Sniper4.webp', description: 'Attack: 100 (+40) | Interval: 3.5s' },
+  { level: 0, cost: 450, upgradeCost: 200, hp: 100, damage: 10, interval: 5008, sellPrice: 150, hasHiddenDetection: false, hasLeadDetection: false, hasFlyingDetection: true, name: 'Sniper', appearance: '/Units/Sniper/Appearance/DHDefaultSniper0.webp', icon: '/Units/Sniper/Appearance/DHDefaultSniper0.webp', description: 'Attack: 10 | Interval: 5.0s | High range' },
+  { level: 1, cost: 0, upgradeCost: 750, hp: 100, damage: 12, interval: 4008, sellPrice: 216, hasHiddenDetection: false, hasLeadDetection: false, hasFlyingDetection: true, name: 'Faster Reloading', appearance: '/Units/Sniper/Appearance/DHDefaultSniper1.webp', icon: '/Units/Sniper/Upgrade_icon/Common1Image.webp', description: 'Attack: 12 (+2) | Interval: 4.0s' },
+  { level: 2, cost: 0, upgradeCost: 2250, hp: 100, damage: 25, interval: 4008, sellPrice: 466, hasHiddenDetection: true, hasLeadDetection: false, hasFlyingDetection: true, name: 'Geared Up', appearance: '/Units/Sniper/Appearance/DHDefaultSniper2.webp', icon: '/Units/Sniper/Upgrade_icon/Sniper2.webp', description: 'Attack: 25 (+13) | +Hidden Detection' },
+  { level: 3, cost: 0, upgradeCost: 4500, hp: 100, damage: 60, interval: 4008, sellPrice: 1216, hasHiddenDetection: true, hasLeadDetection: true, hasFlyingDetection: true, name: 'Frontlines Sniping', appearance: '/Units/Sniper/Appearance/DHDefaultSniper3.webp', icon: '/Units/Sniper/Upgrade_icon/Sniper3.webp', description: 'Attack: 60 (+35) | +Lead Detection' },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 100, interval: 3508, sellPrice: 2716, hasHiddenDetection: true, hasLeadDetection: true, hasFlyingDetection: true, name: 'Spec Ops', appearance: '/Units/Sniper/Appearance/DHDefaultSniper4.webp', icon: '/Units/Sniper/Upgrade_icon/Sniper4.webp', description: 'Attack: 100 (+40) | Interval: 3.5s' },
 ];
 
 const PAINTBALLER_LEVELS = [
-  { level: 0, cost: 100, upgradeCost: 25, hp: 100, damage: 1, interval: 1725, sellPrice: 33, splashRange: 0.5, hasHiddenDetection: false, name: 'Paintballer', appearance: '/PaintBALLER/Appearance/DHDefaultPaintballer0.webp', icon: '/PaintBALLER/Appearance/DHDefaultPaintballer0.webp', description: 'Splash: 0.5 | Interval: 1.725s' },
-  { level: 1, cost: 0, upgradeCost: 150, hp: 100, damage: 1, interval: 1725, sellPrice: 41, splashRange: 0.58, hasHiddenDetection: true, name: 'Paintball Gear', appearance: '/PaintBALLER/Appearance/DHDefaultPaintballer1.webp', icon: '/PaintBALLER/Upgrade/Common1Image.webp', description: 'Splash: 0.58 | +Hidden Detection' },
-  { level: 2, cost: 0, upgradeCost: 600, hp: 100, damage: 2, interval: 1425, sellPrice: 91, splashRange: 0.67, hasHiddenDetection: true, name: 'Shoulder Pads', appearance: '/PaintBALLER/Appearance/DHDefaultPaintballer2.webp', icon: '/PaintBALLER/Upgrade/Paintballer2.webp', description: 'Damage: 2 | Interval: 1.425s | Splash: 0.67' },
-  { level: 3, cost: 0, upgradeCost: 1500, hp: 100, damage: 3, interval: 725, sellPrice: 291, splashRange: 0.67, hasHiddenDetection: true, name: 'Double Barrel Gun', appearance: '/PaintBALLER/Appearance/DHDefaultPaintballer3.webp', icon: '/PaintBALLER/Upgrade/Paintballer3.webp', description: 'Damage: 3 | Interval: 0.725s' },
-  { level: 4, cost: 0, upgradeCost: 3600, hp: 100, damage: 8, interval: 725, sellPrice: 791, splashRange: 0.75, hasHiddenDetection: true, name: 'Competitive Gear', appearance: '/PaintBALLER/Appearance/DHDefaultPaintballer4.webp', icon: '/PaintBALLER/Upgrade/Paintballer4.webp', description: 'Damage: 8 (+5) | Splash: 0.75' },
-  { level: 5, cost: 0, upgradeCost: 0, hp: 100, damage: 20, interval: 725, sellPrice: 1991, splashRange: 0.83, hasHiddenDetection: true, name: 'Paintball Champion', appearance: '/PaintBALLER/Appearance/DHDefaultPaintballer5.webp', icon: '/PaintBALLER/Upgrade/Paintballer5.webp', description: 'Damage: 20 (+12) | Splash: 0.83' },
+  { level: 0, cost: 100, upgradeCost: 25, hp: 100, damage: 1, interval: 1725, sellPrice: 33, splashRange: 0.5, hasHiddenDetection: false, name: 'Paintballer', appearance: '/Units/PaintBALLER/Appearance/DHDefaultPaintballer0.webp', icon: '/Units/PaintBALLER/Appearance/DHDefaultPaintballer0.webp', description: 'Splash: 0.5 | Interval: 1.725s' },
+  { level: 1, cost: 0, upgradeCost: 150, hp: 100, damage: 1, interval: 1725, sellPrice: 41, splashRange: 0.58, hasHiddenDetection: true, name: 'Paintball Gear', appearance: '/Units/PaintBALLER/Appearance/DHDefaultPaintballer1.webp', icon: '/Units/PaintBALLER/Upgrade/Common1Image.webp', description: 'Splash: 0.58 | +Hidden Detection' },
+  { level: 2, cost: 0, upgradeCost: 600, hp: 100, damage: 2, interval: 1425, sellPrice: 91, splashRange: 0.67, hasHiddenDetection: true, name: 'Shoulder Pads', appearance: '/Units/PaintBALLER/Appearance/DHDefaultPaintballer2.webp', icon: '/Units/PaintBALLER/Upgrade/Paintballer2.webp', description: 'Damage: 2 | Interval: 1.425s | Splash: 0.67' },
+  { level: 3, cost: 0, upgradeCost: 1500, hp: 100, damage: 3, interval: 725, sellPrice: 291, splashRange: 0.67, hasHiddenDetection: true, name: 'Double Barrel Gun', appearance: '/Units/PaintBALLER/Appearance/DHDefaultPaintballer3.webp', icon: '/Units/PaintBALLER/Upgrade/Paintballer3.webp', description: 'Damage: 3 | Interval: 0.725s' },
+  { level: 4, cost: 0, upgradeCost: 3600, hp: 100, damage: 8, interval: 725, sellPrice: 791, splashRange: 0.75, hasHiddenDetection: true, name: 'Competitive Gear', appearance: '/Units/PaintBALLER/Appearance/DHDefaultPaintballer4.webp', icon: '/Units/PaintBALLER/Upgrade/Paintballer4.webp', description: 'Damage: 8 (+5) | Splash: 0.75' },
+  { level: 5, cost: 0, upgradeCost: 0, hp: 100, damage: 20, interval: 725, sellPrice: 1991, splashRange: 0.83, hasHiddenDetection: true, name: 'Paintball Champion', appearance: '/Units/PaintBALLER/Appearance/DHDefaultPaintballer5.webp', icon: '/Units/PaintBALLER/Upgrade/Paintballer5.webp', description: 'Damage: 20 (+12) | Splash: 0.83' },
 ];
 
 const TRANSLATIONS: Record<Language, any> = {
@@ -1185,7 +1185,7 @@ const ZOMBIE_TYPES = {
     speedPerGrid: 1.33,
     reward: 25,
     damage: 1.0,
-    image: '/Enemys/Normal/Breakers/Breaker2/Breaker2Fallen.webp'
+    image: '/Enemys/Breakers/Breaker2/Breaker2Fallen.webp'
   },
   BREAKER: {
     name: 'zombieBreakerName',
@@ -1194,7 +1194,7 @@ const ZOMBIE_TYPES = {
     speedPerGrid: 0.42,
     reward: 5,
     damage: 0.8,
-    image: '/Enemys/Normal/Breakers/Breaker/BreakerFallen.webp'
+    image: '/Enemys/Breakers/Breaker/BreakerFallen.webp'
   },
 };
 
@@ -1207,44 +1207,44 @@ interface Lawnmower {
 }
 
 const SCOUT_LEVELS = [
-  { level: 0, cost: 125, upgradeCost: 50, hp: 100, damage: 1, interval: 1025, sellPrice: 41, hasHiddenDetection: false, hasLeadDetection: false, name: 'Scout', appearance: '/Scout/Appearance/LO_Scout_0.webp', icon: '/Scout/Appearance/LO_Scout_0.webp', description: 'Unità rapida di ricognizione.' },
-  { level: 1, cost: 0, upgradeCost: 375, hp: 100, damage: 1, interval: 775, sellPrice: 58, hasHiddenDetection: false, hasLeadDetection: false, name: 'Faster Reloading', appearance: '/Scout/Appearance/LO_Scout_1.webp', icon: '/Scout/Upgrade/Scout1.webp', description: 'Firerate: 1.025 > 0.775' },
-  { level: 2, cost: 0, upgradeCost: 1350, hp: 100, damage: 3, interval: 775, sellPrice: 183, hasHiddenDetection: true, hasLeadDetection: false, name: 'Precise Aiming', appearance: '/Scout/Appearance/LO_Scout_2.webp', icon: '/Scout/Upgrade/Scout2.webp', description: 'Sblocca Hidden Detection (+2 Damage)' },
-  { level: 3, cost: 0, upgradeCost: 2200, hp: 100, damage: 8, interval: 625, sellPrice: 633, hasHiddenDetection: true, hasLeadDetection: false, name: 'Stronger Equipment', appearance: '/Scout/Appearance/LO_Scout_3.webp', icon: '/Scout/Upgrade/Scout4.webp', description: 'Firerate: 0.775 > 0.625 (+5 Damage)' },
-  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 8, interval: 325, sellPrice: 1366, hasHiddenDetection: true, hasLeadDetection: false, name: 'Akimbo Handguns', appearance: '/Scout/Appearance/LO_Scout_4.webp', icon: '/Scout/Upgrade/Scout5.webp', description: 'Firerate: 0.625 > 0.325' },
+  { level: 0, cost: 125, upgradeCost: 50, hp: 100, damage: 1, interval: 1025, sellPrice: 41, hasHiddenDetection: false, hasLeadDetection: false, name: 'Scout', appearance: '/Units/Scout/Appearance/LO_Scout_0.webp', icon: '/Units/Scout/Appearance/LO_Scout_0.webp', description: 'Unità rapida di ricognizione.' },
+  { level: 1, cost: 0, upgradeCost: 375, hp: 100, damage: 1, interval: 775, sellPrice: 58, hasHiddenDetection: false, hasLeadDetection: false, name: 'Faster Reloading', appearance: '/Units/Scout/Appearance/LO_Scout_1.webp', icon: '/Units/Scout/Upgrade/Scout1.webp', description: 'Firerate: 1.025 > 0.775' },
+  { level: 2, cost: 0, upgradeCost: 1350, hp: 100, damage: 3, interval: 775, sellPrice: 183, hasHiddenDetection: true, hasLeadDetection: false, name: 'Precise Aiming', appearance: '/Units/Scout/Appearance/LO_Scout_2.webp', icon: '/Units/Scout/Upgrade/Scout2.webp', description: 'Sblocca Hidden Detection (+2 Damage)' },
+  { level: 3, cost: 0, upgradeCost: 2200, hp: 100, damage: 8, interval: 625, sellPrice: 633, hasHiddenDetection: true, hasLeadDetection: false, name: 'Stronger Equipment', appearance: '/Units/Scout/Appearance/LO_Scout_3.webp', icon: '/Units/Scout/Upgrade/Scout4.webp', description: 'Firerate: 0.775 > 0.625 (+5 Damage)' },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 8, interval: 325, sellPrice: 1366, hasHiddenDetection: true, hasLeadDetection: false, name: 'Akimbo Handguns', appearance: '/Units/Scout/Appearance/LO_Scout_4.webp', icon: '/Units/Scout/Upgrade/Scout5.webp', description: 'Firerate: 0.625 > 0.325' },
 ];
 
 const SHOTGUNNER_LEVELS = [
-  { level: 0, cost: 800, upgradeCost: 300, hp: 100, damage: 2, bullets: 6, interval: 1025, range: 300, spread: 40, sellPrice: 266, hasHiddenDetection: false, hasLeadDetection: false, name: 'Shotgunner', appearance: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl0.webp', icon: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl0.webp', description: 'Bullets: 6 | Range: 3 | Spread: 40' },
-  { level: 1, cost: 0, upgradeCost: 1200, hp: 100, damage: 3, bullets: 6, interval: 1025, range: 300, spread: 40, sellPrice: 366, hasHiddenDetection: false, hasLeadDetection: false, name: 'Heavier Shells', appearance: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl1.webp', icon: '/Farm/Appearance/Shotgunner/Upgrade icon/Level1.webp', description: '+1 Damage' },
-  { level: 2, cost: 0, upgradeCost: 3400, hp: 100, damage: 3, bullets: 8, interval: 1025, range: 300, spread: 35, sellPrice: 766, hasHiddenDetection: true, hasLeadDetection: true, name: 'Shotgun Knowledge', appearance: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl2.webp', icon: '/Farm/Appearance/Shotgunner/Upgrade icon/ShotgunnerLevel2.webp', description: 'Bullets: 8 | Spread: 35 | +Hidden & Lead' },
-  { level: 3, cost: 0, upgradeCost: 9500, hp: 100, damage: 5, bullets: 8, interval: 825, range: 367, spread: 30, sellPrice: 1900, hasHiddenDetection: true, hasLeadDetection: true, name: 'Slug Madness', appearance: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl3.webp', icon: '/Farm/Appearance/Shotgunner/Upgrade icon/ShotgunnerLevel3.webp', description: '+2 Damage | Interval: 0.825s | Range: 3.67' },
-  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 10, bullets: 9, interval: 825, range: 367, spread: 30, sellPrice: 5066, hasHiddenDetection: true, hasLeadDetection: true, name: 'Tactical Blowback', appearance: '/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl4.webp', icon: '/Farm/Appearance/Shotgunner/Upgrade icon/ShotgunnerLevel4.webp', description: '+5 Damage | Bullets: 9 | Spread: 30 | Range: 3.67' },
+  { level: 0, cost: 800, upgradeCost: 300, hp: 100, damage: 2, bullets: 6, interval: 1025, range: 300, spread: 40, sellPrice: 266, hasHiddenDetection: false, hasLeadDetection: false, name: 'Shotgunner', appearance: '/Units/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl0.webp', icon: '/Units/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl0.webp', description: 'Bullets: 6 | Range: 3 | Spread: 40' },
+  { level: 1, cost: 0, upgradeCost: 1200, hp: 100, damage: 3, bullets: 6, interval: 1025, range: 300, spread: 40, sellPrice: 366, hasHiddenDetection: false, hasLeadDetection: false, name: 'Heavier Shells', appearance: '/Units/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl1.webp', icon: '/Units/Farm/Appearance/Shotgunner/Upgrade_icon/Level1.webp', description: '+1 Damage' },
+  { level: 2, cost: 0, upgradeCost: 3400, hp: 100, damage: 3, bullets: 8, interval: 1025, range: 300, spread: 35, sellPrice: 766, hasHiddenDetection: true, hasLeadDetection: true, name: 'Shotgun Knowledge', appearance: '/Units/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl2.webp', icon: '/Units/Farm/Appearance/Shotgunner/Upgrade_icon/ShotgunnerLevel2.webp', description: 'Bullets: 8 | Spread: 35 | +Hidden & Lead' },
+  { level: 3, cost: 0, upgradeCost: 9500, hp: 100, damage: 5, bullets: 8, interval: 825, range: 367, spread: 30, sellPrice: 1900, hasHiddenDetection: true, hasLeadDetection: true, name: 'Slug Madness', appearance: '/Units/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl3.webp', icon: '/Units/Farm/Appearance/Shotgunner/Upgrade_icon/ShotgunnerLevel3.webp', description: '+2 Damage | Interval: 0.825s | Range: 3.67' },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 10, bullets: 9, interval: 825, range: 367, spread: 30, sellPrice: 5066, hasHiddenDetection: true, hasLeadDetection: true, name: 'Tactical Blowback', appearance: '/Units/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl4.webp', icon: '/Units/Farm/Appearance/Shotgunner/Upgrade_icon/ShotgunnerLevel4.webp', description: '+5 Damage | Bullets: 9 | Spread: 30 | Range: 3.67' },
 ];
 
 const ASSASSIN_LEVELS = [
-  { level: 0, cost: 300, upgradeCost: 450, hp: 100, damage: 3, interval: 625, sellPrice: 100, name: 'Assassin', appearance: '/Assassin/Aspect/AssassinLevel0.webp', icon: '/Assassin/Aspect/AssassinLevel0.webp', description: 'Quick unit with high damage attacks.', range: 5, hasHiddenDetection: false, hasLeadDetection: false },
-  { level: 1, cost: 0, upgradeCost: 750, hp: 100, damage: 6, interval: 525, sellPrice: 250, name: 'CQC Training', appearance: '/Assassin/Aspect/AssassinLevel1.webp', icon: '/Assassin/Upgrade icon/AssassinUpgrade1.webp', description: 'Damage: 6 (+3) | Interval: 0.525s', range: 5, hasHiddenDetection: false, hasLeadDetection: false },
-  { level: 2, cost: 0, upgradeCost: 2378, hp: 100, damage: 6, interval: 525, sellPrice: 500, name: 'Umbral Tempest', appearance: '/Assassin/Aspect/AssassinLevel2.webp', icon: '/Assassin/Upgrade icon/AssassinUpgrade2.webp', description: '+Hidden Detection | Whirlwind: Every 3rd hit, 12 DMG AoE (3 tiles)', range: 5, hasHiddenDetection: true, hasLeadDetection: false, hasWhirlwind: true, whirlwindDamage: 12, whirlwindRange: 3 },
-  { level: 3, cost: 0, upgradeCost: 5500, hp: 100, damage: 14, interval: 525, sellPrice: 1500, name: 'Ascended Shadows', appearance: '/Assassin/Aspect/AssassinLevel3.webp', icon: '/Assassin/Upgrade icon/AssassinUpgrade3.webp', description: 'Damage: 14 (+8) | Whirlwind +15 DMG', range: 5, hasHiddenDetection: true, hasLeadDetection: false, hasWhirlwind: true, whirlwindDamage: 27, whirlwindRange: 3 },
-  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 35, interval: 525, sellPrice: 3500, name: 'Master Assassin', appearance: '/Assassin/Aspect/AssassinLevel4.webp', icon: '/Assassin/Upgrade icon/AssassinUpgrade4.webp', description: 'Damage: 35 (+21) | Fan of Knives (Range: 5)', range: 5, hasHiddenDetection: true, hasLeadDetection: false, hasWhirlwind: true, whirlwindDamage: 41, whirlwindRange: 3, hasFan: true, fanDamage: 60, fanThreshold: 500, fanRange: 5 },
+  { level: 0, cost: 300, upgradeCost: 450, hp: 100, damage: 3, interval: 625, sellPrice: 100, name: 'Assassin', appearance: '/Units/Assassin/Aspect/AssassinLevel0.webp', icon: '/Units/Assassin/Aspect/AssassinLevel0.webp', description: 'Quick unit with high damage attacks.', range: 5, hasHiddenDetection: false, hasLeadDetection: false },
+  { level: 1, cost: 0, upgradeCost: 750, hp: 100, damage: 6, interval: 525, sellPrice: 250, name: 'CQC Training', appearance: '/Units/Assassin/Aspect/AssassinLevel1.webp', icon: '/Units/Assassin/Upgrade_icon/AssassinUpgrade1.webp', description: 'Damage: 6 (+3) | Interval: 0.525s', range: 5, hasHiddenDetection: false, hasLeadDetection: false },
+  { level: 2, cost: 0, upgradeCost: 2378, hp: 100, damage: 6, interval: 525, sellPrice: 500, name: 'Umbral Tempest', appearance: '/Units/Assassin/Aspect/AssassinLevel2.webp', icon: '/Units/Assassin/Upgrade_icon/AssassinUpgrade2.webp', description: '+Hidden Detection | Whirlwind: Every 3rd hit, 12 DMG AoE (3 tiles)', range: 5, hasHiddenDetection: true, hasLeadDetection: false, hasWhirlwind: true, whirlwindDamage: 12, whirlwindRange: 3 },
+  { level: 3, cost: 0, upgradeCost: 5500, hp: 100, damage: 14, interval: 525, sellPrice: 1500, name: 'Ascended Shadows', appearance: '/Units/Assassin/Aspect/AssassinLevel3.webp', icon: '/Units/Assassin/Upgrade_icon/AssassinUpgrade3.webp', description: 'Damage: 14 (+8) | Whirlwind +15 DMG', range: 5, hasHiddenDetection: true, hasLeadDetection: false, hasWhirlwind: true, whirlwindDamage: 27, whirlwindRange: 3 },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 35, interval: 525, sellPrice: 3500, name: 'Master Assassin', appearance: '/Units/Assassin/Aspect/AssassinLevel4.webp', icon: '/Units/Assassin/Upgrade_icon/AssassinUpgrade4.webp', description: 'Damage: 35 (+21) | Fan of Knives (Range: 5)', range: 5, hasHiddenDetection: true, hasLeadDetection: false, hasWhirlwind: true, whirlwindDamage: 41, whirlwindRange: 3, hasFan: true, fanDamage: 60, fanThreshold: 500, fanRange: 5 },
 ];
 
 const FREEZER_LEVELS = [
-  { level: 0, cost: 425, upgradeCost: 225, hp: 100, damage: 1, interval: 525, sellPrice: 141, maxSlow: 0.5, slowPerShot: 0.1, name: 'Freezer', appearance: '/Freezer/Appearance/KRFreezer0.webp', icon: '/Freezer/Appearance/KRFreezer0.webp', description: 'Slows down enemies. Max 50%.', hasHiddenDetection: false, hasLeadDetection: false },
-  { level: 1, cost: 0, upgradeCost: 650, hp: 100, damage: 2, interval: 525, sellPrice: 216, maxSlow: 0.6, slowPerShot: 0.15, name: 'Expedition Gear', appearance: '/Freezer/Appearance/KRFreezer1.webp', icon: '/Freezer/Upgrade/Freezer_Upgrade_1.webp', description: '+1 Damage | 60% Max Slow | 15% Shot Slow', hasHiddenDetection: false, hasLeadDetection: false },
-  { level: 2, cost: 0, upgradeCost: 2000, hp: 100, damage: 2, interval: 525, sellPrice: 433, maxSlow: 0.6, slowPerShot: 0.2, freezeDuration: 2000, name: 'Bundled Up!', appearance: '/Freezer/Appearance/KRFreezer2.webp', icon: '/Freezer/Upgrade/Freezer_Upgrade_2.webp', description: '+Hidden Detection | Freezes at max chill (2s)', hasHiddenDetection: true, hasLeadDetection: false },
-  { level: 3, cost: 0, upgradeCost: 4500, hp: 100, damage: 3, interval: 175, burstCount: 4, cooldown: 750, sellPrice: 2766, maxSlow: 0.75, slowPerShot: 0.25, freezeDuration: 2500, defenseReduction: 0.1, name: 'Arctic Soldier', appearance: '/Freezer/Appearance/KRFreezer3.webp', icon: '/Freezer/Upgrade/Freezer_Upgrade_3.webp', description: 'Burst: 4 | 75% Max Slow | 10% Def Shred | 2.5s Freeze', hasHiddenDetection: true, hasLeadDetection: false },
-  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 5, interval: 175, burstCount: 7, cooldown: 750, sellPrice: 4500, maxSlow: 0.75, slowPerShot: 0.25, freezeDuration: 3000, defenseReduction: 0.1, hasAbility: true, name: "Arctic Master", appearance: '/Freezer/Appearance/KRFreezer4.webp', icon: '/Freezer/Upgrade/Freezer_Upgrade_4.webp', description: '+2 Damage | Burst: 7 | 3s Freeze | Frost Grenade', hasHiddenDetection: true, hasLeadDetection: false },
+  { level: 0, cost: 425, upgradeCost: 225, hp: 100, damage: 1, interval: 525, sellPrice: 141, maxSlow: 0.5, slowPerShot: 0.1, name: 'Freezer', appearance: '/Units/Freezer/Appearance/KRFreezer0.webp', icon: '/Units/Freezer/Appearance/KRFreezer0.webp', description: 'Slows down enemies. Max 50%.', hasHiddenDetection: false, hasLeadDetection: false },
+  { level: 1, cost: 0, upgradeCost: 650, hp: 100, damage: 2, interval: 525, sellPrice: 216, maxSlow: 0.6, slowPerShot: 0.15, name: 'Expedition Gear', appearance: '/Units/Freezer/Appearance/KRFreezer1.webp', icon: '/Units/Freezer/Upgrade/Freezer_Upgrade_1.webp', description: '+1 Damage | 60% Max Slow | 15% Shot Slow', hasHiddenDetection: false, hasLeadDetection: false },
+  { level: 2, cost: 0, upgradeCost: 2000, hp: 100, damage: 2, interval: 525, sellPrice: 433, maxSlow: 0.6, slowPerShot: 0.2, freezeDuration: 2000, name: 'Bundled Up!', appearance: '/Units/Freezer/Appearance/KRFreezer2.webp', icon: '/Units/Freezer/Upgrade/Freezer_Upgrade_2.webp', description: '+Hidden Detection | Freezes at max chill (2s)', hasHiddenDetection: true, hasLeadDetection: false },
+  { level: 3, cost: 0, upgradeCost: 4500, hp: 100, damage: 3, interval: 175, burstCount: 4, cooldown: 750, sellPrice: 2766, maxSlow: 0.75, slowPerShot: 0.25, freezeDuration: 2500, defenseReduction: 0.1, name: 'Arctic Soldier', appearance: '/Units/Freezer/Appearance/KRFreezer3.webp', icon: '/Units/Freezer/Upgrade/Freezer_Upgrade_3.webp', description: 'Burst: 4 | 75% Max Slow | 10% Def Shred | 2.5s Freeze', hasHiddenDetection: true, hasLeadDetection: false },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 5, interval: 175, burstCount: 7, cooldown: 750, sellPrice: 4500, maxSlow: 0.75, slowPerShot: 0.25, freezeDuration: 3000, defenseReduction: 0.1, hasAbility: true, name: "Arctic Master", appearance: '/Units/Freezer/Appearance/KRFreezer4.webp', icon: '/Units/Freezer/Upgrade/Freezer_Upgrade_4.webp', description: '+2 Damage | Burst: 7 | 3s Freeze | Frost Grenade', hasHiddenDetection: true, hasLeadDetection: false },
 ];
 
 const FARM_LEVELS = [
-  { level: 0, cost: 300, upgradeCost: 200, hp: 100, production: 60, interval: 7500, sellPrice: 100, appearance: '/Farm/Appearance/Farm0.webp', icon: '/Farm/Appearance/Farm0.webp', name: 'Farm' },
-  { level: 1, cost: 0, upgradeCost: 600, hp: 100, production: 100, interval: 7500, sellPrice: 166, appearance: '/Farm/Appearance/NDFarm1.webp', icon: '/Farm/Upgrade/Farm1.webp', name: 'Carrot Farm' },
-  { level: 2, cost: 0, upgradeCost: 1250, hp: 100, production: 225, interval: 7500, sellPrice: 366, appearance: '/Farm/Appearance/NDFarm2.webp', icon: '/Farm/Upgrade/Farm2.webp', name: 'Wheat Farm' },
-  { level: 3, cost: 0, upgradeCost: 2500, hp: 100, production: 500, interval: 7500, sellPrice: 783, appearance: '/Farm/Appearance/NDFarm3.webp', icon: '/Farm/Upgrade/Farm3.webp', name: 'Tree Farm' },
-  { level: 4, cost: 0, upgradeCost: 4500, hp: 100, production: 900, interval: 7500, sellPrice: 1616, appearance: '/Farm/Appearance/NDFarm4.webp', icon: '/Farm/Upgrade/Farm4.webp', name: 'Apple Farm' },
-  { level: 5, cost: 0, upgradeCost: 0, hp: 100, production: 1500, interval: 7500, sellPrice: 3116, appearance: '/Farm/Appearance/NDFarm5.webp', icon: '/Farm/Upgrade/Farm5.webp', name: 'Space Fruit Farm' },
+  { level: 0, cost: 300, upgradeCost: 200, hp: 100, production: 60, interval: 7500, sellPrice: 100, appearance: '/Units/Farm/Appearance/Farm0.webp', icon: '/Units/Farm/Appearance/Farm0.webp', name: 'Farm' },
+  { level: 1, cost: 0, upgradeCost: 600, hp: 100, production: 100, interval: 7500, sellPrice: 166, appearance: '/Units/Farm/Appearance/NDFarm1.webp', icon: '/Units/Farm/Upgrade/Farm1.webp', name: 'Carrot Farm' },
+  { level: 2, cost: 0, upgradeCost: 1250, hp: 100, production: 225, interval: 7500, sellPrice: 366, appearance: '/Units/Farm/Appearance/NDFarm2.webp', icon: '/Units/Farm/Upgrade/Farm2.webp', name: 'Wheat Farm' },
+  { level: 3, cost: 0, upgradeCost: 2500, hp: 100, production: 500, interval: 7500, sellPrice: 783, appearance: '/Units/Farm/Appearance/NDFarm3.webp', icon: '/Units/Farm/Upgrade/Farm3.webp', name: 'Tree Farm' },
+  { level: 4, cost: 0, upgradeCost: 4500, hp: 100, production: 900, interval: 7500, sellPrice: 1616, appearance: '/Units/Farm/Appearance/NDFarm4.webp', icon: '/Units/Farm/Upgrade/Farm4.webp', name: 'Apple Farm' },
+  { level: 5, cost: 0, upgradeCost: 0, hp: 100, production: 1500, interval: 7500, sellPrice: 3116, appearance: '/Units/Farm/Appearance/NDFarm5.webp', icon: '/Units/Farm/Upgrade/Farm5.webp', name: 'Space Fruit Farm' },
 ];
 
 // --- Components ---
@@ -1605,7 +1605,7 @@ export default function App() {
               }]);
 
               // Scout weapons sound
-              const fireSound = unit.level <= 2 ? '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/SoldierFire0.ogg' : '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/SoldierFire1.ogg';
+              const fireSound = unit.level <= 2 ? '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/SoldierFire0.ogg' : '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/SoldierFire1.ogg';
               playSFX(fireSound);
               setTimeout(() => playSFX(fireSound), 50);
 
@@ -1661,14 +1661,14 @@ export default function App() {
               }]);
               
               // Sniper sound mapping
-              const shootSound = unit.level <= 2 ? '/Sniper/Sound/Sniper_0.ogg' : 
-                                 unit.level === 3 ? '/Sniper/Sound/Sniper_1.ogg' : 
-                                 '/Sniper/Sound/Sniper_2.ogg';
+              const shootSound = unit.level <= 2 ? '/Units/Sniper/Sound/Sniper_0.ogg' : 
+                                 unit.level === 3 ? '/Units/Sniper/Sound/Sniper_1.ogg' : 
+                                 '/Units/Sniper/Sound/Sniper_2.ogg';
               playSFX(shootSound);
               
               // Play reload sound after a short delay (e.g., 750ms)
               setTimeout(() => {
-                playSFX('/Sniper/Sound/Sniper_Reload.ogg');
+                playSFX('/Units/Sniper/Sound/Sniper_Reload.ogg');
               }, 750);
 
               return { ...unit, lastAttackTime: now, targetId: target.id };
@@ -1728,7 +1728,7 @@ export default function App() {
                 color: '#e74c3c'
               }]);
 
-              playSFX('/PaintBALLER/Sound/PaintballerFire.ogg');
+              playSFX('/Units/PaintBALLER/Sound/PaintballerFire.ogg');
               return { ...unit, lastAttackTime: now, targetId: target.id };
             }
           }
@@ -1787,14 +1787,14 @@ export default function App() {
                 color: '#ff4d00'
               }]);
 
-              const fireSound = unit.level <= 2 ? '/Sniper/Sound/Demoman/Sound/DemomanFire0.ogg' : '/Sniper/Sound/Demoman/Sound/DemomanFire1.ogg';
+              const fireSound = unit.level <= 2 ? '/Units/Sniper/Sound/Demoman/Sound/DemomanFire0.ogg' : '/Units/Sniper/Sound/Demoman/Sound/DemomanFire1.ogg';
               playSFX(fireSound);
               // Adding "echo" by playing again with slight delay for level 3-4 (index 3 and 4)
               if (unit.level >= 3) {
                 setTimeout(() => playSFX(fireSound), 60);
               }
               if (unit.level >= 3) {
-                setTimeout(() => playSFX('/Sniper/Sound/Demoman/Sound/DemomanFireReload.ogg'), 600);
+                setTimeout(() => playSFX('/Units/Sniper/Sound/Demoman/Sound/DemomanFireReload.ogg'), 600);
               }
               return { ...unit, lastAttackTime: now, targetId: target.id };
             }
@@ -1850,8 +1850,8 @@ export default function App() {
                 color: '#f1c40f'
               }]);
 
-              const shootSound = unit.level <= 2 ? '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/SoldierFire0.ogg' : 
-                                 '/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/SoldierFire1.ogg';
+              const shootSound = unit.level <= 2 ? '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/SoldierFire0.ogg' : 
+                                 '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/SoldierFire1.ogg';
               playSFX(shootSound);
               // Echo for soldier too
               setTimeout(() => playSFX(shootSound), 40);
@@ -1945,7 +1945,7 @@ export default function App() {
                 }]);
               }
 
-              playSFX('/Sniper/Sound/Demoman/Sound/DemomanFire0.ogg');
+              playSFX('/Units/Sniper/Sound/Demoman/Sound/DemomanFire0.ogg');
               return { ...unit, lastAttackTime: now };
             }
           }
@@ -2008,7 +2008,7 @@ export default function App() {
                 color: '#3498db'
               }]);
 
-              playSFX('/PaintBALLER/Sound/PaintballerFire.ogg');
+              playSFX('/Units/PaintBALLER/Sound/PaintballerFire.ogg');
               
               let nextBurstCount = unit.burstRemaining || 0;
               if (config.burstCount) {
@@ -2061,11 +2061,11 @@ export default function App() {
               }]);
               
               // Assassin sound (Metallic click/slash)
-              playSFX('/Sniper/Sound/Sniper_Reload.ogg'); 
+              playSFX('/Units/Sniper/Sound/Sniper_Reload.ogg'); 
               
               // Whirlwind logic
               if (config.hasWhirlwind && unit.slashCount % 3 === 0) {
-                 playSFX('/Sniper/Sound/Demoman/Sound/DemomanFire1.ogg'); // High impact Area sound
+                 playSFX('/Units/Sniper/Sound/Demoman/Sound/DemomanFire1.ogg'); // High impact Area sound
                  const whirangePx = config.whirlwindRange * CELL_SIZE;
                  nextZombies.forEach(z => {
                    const dx = z.x - unit.x;
@@ -2104,7 +2104,7 @@ export default function App() {
                     unit.totalDamageDealt += fDmg;
 
                     // ADD KNIFE PROJECTILE ANIMATION
-                    if (idx === 0) playSFX('/PaintBALLER/Sound/PaintballerFire.ogg');
+                    if (idx === 0) playSFX('/Units/PaintBALLER/Sound/PaintballerFire.ogg');
                     const dx = z.x - unit.x;
                     const dy = z.y - unit.y;
                     const rotation = Math.atan2(dy, dx) * (180 / Math.PI);
@@ -2180,7 +2180,7 @@ export default function App() {
         return unit;
       });
 
-      if (spawnSound) playSFX('/Farm/Upgrade/Sounds/FarmCash.ogg');
+      if (spawnSound) playSFX('/Units/Farm/Upgrade/Sounds/FarmCash.ogg');
 
       // Cleanup effects
       setHits(prev => prev.filter(h => now - h.createdAt < 600));
@@ -2540,7 +2540,7 @@ export default function App() {
         abilityCooldowns: { ...cooldowns, [abilityName]: now + 15000 }
       } : u));
       
-      playSFX('/PaintBALLER/Sound/PaintballerFire.ogg');
+      playSFX('/Units/PaintBALLER/Sound/PaintballerFire.ogg');
       
       // Spawn Grenade Projectile
       const targetX = targetZombies[0].x;
@@ -2584,7 +2584,7 @@ export default function App() {
         });
       }, 800);
       
-      playSFX('/Sniper/Sound/Demoman/Sound/DemomanFire1.ogg');
+      playSFX('/Units/Sniper/Sound/Demoman/Sound/DemomanFire1.ogg');
     }
   };
 
@@ -2786,7 +2786,7 @@ export default function App() {
                 <div className="bg-ui-bg border-2 border-ui-border rounded-xl px-3 py-1 flex items-center gap-2 min-w-[120px] shadow-[0_4px_0_rgba(0,0,0,0.3)]">
                   <div className="w-8 h-7 bg-[#27ae60] border border-money-green rounded relative flex flex-col justify-center items-center after:content-[''] after:absolute after:w-full after:h-1.5 after:bg-white after:opacity-80">
                     <img 
-                      src="/Random_icon/Cash_Icon.webp" 
+                      src="/Units/Random_icon/Cash_Icon.webp" 
                       alt="Money" 
                       className="w-5 h-5 object-contain relative z-10" 
                       referrerPolicy="no-referrer"
@@ -2887,7 +2887,7 @@ export default function App() {
                       className="relative group active:scale-95 transition-transform"
                     >
                        <div className="w-10 h-10 bg-blue-900/40 border-2 border-blue-400/50 rounded-xl flex items-center justify-center p-1 overflow-hidden shadow-inner">
-                         <img src="/Freezer/Ability/Jester_Ability.webp" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                         <img src="/Units/Freezer/Ability/Jester_Ability.webp" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
                          <div className="absolute -top-1 -right-1 bg-accent-yellow text-black text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#1a1a1a] shadow-lg">
                            {units.filter(u => (getLevels(u.unitType)[u.level] as any).hasAbility && !(u.abilityCooldowns?.['Frost Grenade'] && gameTimeRef.current < (u.abilityCooldowns as any)['Frost Grenade'])).length}
                          </div>
@@ -3123,7 +3123,7 @@ export default function App() {
                     setSkyMoney(prev => prev.map(moneyItem => 
                       moneyItem.id === m.id ? { ...moneyItem, collected: true } : moneyItem
                     ));
-                    playSFX('/Farm/Upgrade/Sounds/FarmCash.ogg');
+                    playSFX('/Units/Farm/Upgrade/Sounds/FarmCash.ogg');
                   }}
                   whileHover={{ scale: 1.2 }}
                   className={`absolute w-16 h-16 pointer-events-auto cursor-pointer flex items-center justify-center ${m.collected ? 'hidden' : ''}`}
@@ -3137,7 +3137,7 @@ export default function App() {
                       transition={{ duration: 1, repeat: Infinity }}
                       className="absolute inset-0 bg-yellow-500/20 rounded-full border-4 border-yellow-400"
                     />
-                    <img src="/Random_icon/Cash_Icon.webp" alt="Cash" className="w-10 h-10 relative z-10" />
+                    <img src="/Units/Random_icon/Cash_Icon.webp" alt="Cash" className="w-10 h-10 relative z-10" />
                     <span className="absolute -bottom-4 text-money-green font-black text-[10px] drop-shadow-md">
                       ${Math.floor(100 * DIFFICULTY_CONFIG[difficulty].moneyMult)}
                     </span>
@@ -3174,7 +3174,7 @@ export default function App() {
                   }}
                 >
                   {proj.type === 'grenade' ? (
-                    <img src="/Freezer/Ability/DefaultFreezeNade.webp" className="w-full h-full object-contain drop-shadow-[0_0_10px_#3498db]" referrerPolicy="no-referrer" />
+                    <img src="/Units/Freezer/Ability/DefaultFreezeNade.webp" className="w-full h-full object-contain drop-shadow-[0_0_10px_#3498db]" referrerPolicy="no-referrer" />
                   ) : proj.type === 'knife' ? (
                     <div className="w-full h-full relative group">
                         <div 
@@ -3280,7 +3280,7 @@ export default function App() {
                   }}
                 >
                   <div className="bg-money-green/30 backdrop-blur-md border-2 border-money-green rounded-full p-2.5 shadow-[0_0_15px_rgba(39,174,96,0.4)]">
-                    <img src="/Random_icon/Cash_Icon.webp" alt="Cash" className="w-7 h-7 object-contain" />
+                    <img src="/Units/Random_icon/Cash_Icon.webp" alt="Cash" className="w-7 h-7 object-contain" />
                   </div>
                   <span className="text-money-green font-black text-sm drop-shadow-[0_2px-2px_rgba(0,0,0,1)] uppercase mt-1">
                     +${particle.amount}
@@ -3459,17 +3459,17 @@ export default function App() {
                   )}
                <img 
                     src={zombie.zombieType === 'SLOW'
-                      ? `/Enemys/Normal/Slow/SlowAnim${zombie.variant % 2 + 1}.webp`
+                      ? `/Enemys/Slow/SlowAnim${zombie.variant % 2 + 1}.webp`
                       : zombie.zombieType === 'SPEEDY' 
-                      ? `/Enemys/Normal/Speedy/SpeedyAnim${zombie.variant % 2 + 1}.webp`
+                      ? `/Enemys/Speedy/SpeedyAnim${zombie.variant % 2 + 1}.webp`
                       : zombie.zombieType === 'NORMAL_BOSS'
-                      ? `/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/EasyModeNormalBoss.webp`
+                      ? `/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/EasyModeNormalBoss.webp`
                       : zombie.zombieType === 'HIDDEN'
-                      ? `/Enemys/Normal/Hidden/HiddenV5.webp`
+                      ? `/Enemys/Hidden/HiddenV5.webp`
                       : zombie.zombieType === 'BREAKER2'
-                      ? `/Enemys/Normal/Breakers/Breaker2/Breaker2Fallen.webp`
+                      ? `/Enemys/Breakers/Breaker2/Breaker2Fallen.webp`
                       : zombie.zombieType === 'BREAKER'
-                      ? `/Enemys/Normal/Breakers/Breaker/BreakerFallen.webp`
+                      ? `/Enemys/Breakers/Breaker/BreakerFallen.webp`
                       : `/Enemys/Normal/NormalAnim${zombie.variant % 2 + 1}.webp`} 
                     alt="Zombie" 
                     className={`w-full h-full object-contain ${zombie.isStunned ? 'brightness-75' : ''}`}
@@ -3548,7 +3548,7 @@ export default function App() {
                   )}
                   
                   <img 
-                    src="/Random_icon/HeatwaveConsumable.webp" 
+                    src="/Units/Random_icon/HeatwaveConsumable.webp" 
                     alt="Heatwave" 
                     className={`w-full h-full object-contain relative z-10 scale-x-[-1] drop-shadow-[0_0_15px_rgba(255,100,0,0.8)] ${mower.isTriggered ? 'animate-pulse scale-125' : ''}`}
                     referrerPolicy="no-referrer"
@@ -3657,7 +3657,7 @@ export default function App() {
                           >
                             <span className="text-lg font-black text-white italic tracking-tighter">{t('upgrade')}</span>
                             <div className="flex items-center gap-1.5 bg-black/20 px-3 py-1 rounded-full border border-white/10 group-hover:scale-105 transition-transform">
-                              <img src="/Random icon/Cash_Icon.webp" alt="Cash" className="w-3 h-3" />
+                              <img src="/Units/Random_icon/Cash_Icon.webp" alt="Cash" className="w-3 h-3" />
                               <span className="text-white font-black text-sm">${cur.upgradeCost}</span>
                             </div>
                           </button>
@@ -3699,7 +3699,7 @@ export default function App() {
                        {cur.hasWhirlwind && (
                           <div className="flex flex-col items-center w-full mt-3 bg-black/60 p-4 rounded-2xl border-2 border-green-500/50 shadow-[0_0_15px_rgba(34,197,94,0.2)]">
                             <div className="flex items-center gap-2 mb-2">
-                              <img src="/Assassin/Passive_Ability_Icons/WhirlwindSlashPassive.webp" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]" referrerPolicy="no-referrer" />
+                              <img src="/Units/Assassin/Passive_Ability_Icons/WhirlwindSlashPassive.webp" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]" referrerPolicy="no-referrer" />
                               <span className="text-xs text-green-400 font-black uppercase drop-shadow-[0_0_5px_rgba(34,197,94,0.5)]">Whirlwind Slash</span>
                             </div>
                             <div className="w-full h-5 bg-black/80 rounded-full border-2 border-white/20 overflow-hidden shadow-[inset_0_2px_6px_rgba(0,0,0,1)]">
@@ -3716,7 +3716,7 @@ export default function App() {
                        {cur.hasFan && (
                           <div className="flex flex-col items-center w-full mt-3 bg-black/60 p-4 rounded-2xl border-2 border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.2)]">
                             <div className="flex items-center gap-2 mb-2">
-                              <img src="/Assassin/Passive_Ability_Icons/FanofKnivesPassive.webp" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]" referrerPolicy="no-referrer" />
+                              <img src="/Units/Assassin/Passive_Ability_Icons/FanofKnivesPassive.webp" className="w-10 h-10 object-contain drop-shadow-[0_0_10px_rgba(0,0,0,0.8)]" referrerPolicy="no-referrer" />
                               <span className="text-xs text-red-500 font-black uppercase drop-shadow-[0_0_5px_rgba(239,68,68,0.5)]">Fan of Knives</span>
                             </div>
                             <div className="w-full h-5 bg-black/80 rounded-full border-2 border-white/20 overflow-hidden shadow-[inset_0_2px_6px_rgba(0,0,0,1)]">
@@ -3775,7 +3775,7 @@ export default function App() {
                              >
                                <span className="text-lg font-black text-white italic tracking-tighter">{t('upgrade')}</span>
                                <div className="flex items-center gap-1.5 bg-black/20 px-3 py-1 rounded-full border border-white/10 group-hover:scale-105 transition-transform">
-                                 <img src="/Random_icon/Cash_Icon.webp" alt="Cash" className="w-3 h-3" />
+                                 <img src="/Units/Random_icon/Cash_Icon.webp" alt="Cash" className="w-3 h-3" />
                                  <span className="text-white font-black text-sm">${cur.upgradeCost}</span>
                                </div>
                              </button>
@@ -3811,7 +3811,7 @@ export default function App() {
                           className="mt-3 w-full h-16 bg-blue-600 hover:bg-blue-500 active:translate-y-1 transition-all rounded-2xl flex items-center justify-center gap-2 shadow-[0_4px_0_#2980b9] disabled:opacity-50 disabled:grayscale disabled:shadow-none overflow-hidden"
                         >
                            <div className="w-full h-full p-2 relative flex items-center justify-center">
-                             <img src="/Freezer/Ability/Jester_Ability.webp" className="h-full object-contain" />
+                             <img src="/Units/Freezer/Ability/Jester_Ability.webp" className="h-full object-contain" />
                              {selectedUnit.abilityCooldowns?.['Frost Grenade'] && gameTimeRef.current < selectedUnit.abilityCooldowns['Frost Grenade'] && (
                                <div 
                                  className="absolute inset-0 bg-black/60 flex items-center justify-center font-black text-white"
@@ -4169,12 +4169,12 @@ export default function App() {
                               src={key === 'NORMAL' 
                                 ? "/Enemys/Normal/NormalAnim1.webp" 
                                 : key === 'SPEEDY'
-                                ? "/Enemys/Normal/Speedy/SpeedyAnim1.webp"
+                                ? "/Enemys/Speedy/SpeedyAnim1.webp"
                                 : key === 'SLOW'
-                                ? "/Enemys/Normal/Slow/SlowAnim1.webp"
+                                ? "/Enemys/Slow/SlowAnim1.webp"
                                 : key === 'HIDDEN'
-                                ? "/Enemys/Normal/Hidden/HiddenV5.webp"
-                                : (type as any).image || "/Sniper/Sound/Demoman/Upgrade icon/Soldier/Sound/Normal Boss/EasyModeNormalBoss.webp"
+                                ? "/Enemys/Hidden/HiddenV5.webp"
+                                : (type as any).image || "/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/EasyModeNormalBoss.webp"
                               } 
                               alt={type.name} 
                               className={`w-full h-full object-contain ${key === 'SPEEDY' ? 'brightness-125 saturate-150 scale-x-[-1]' : ''}`}
@@ -4214,7 +4214,7 @@ export default function App() {
                       {/* Farm */}
                       <div className="flex gap-8 items-start border-b border-[#3B2D21] pb-8">
                         <div className="w-32 h-32 bg-[#27ae60]/30 rounded-2xl flex items-center justify-center border-4 border-[#3B2D21] p-4 relative">
-                          <img src="/Farm/Appearance/Farm0.webp" alt="Farm" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                          <img src="/Units/Farm/Appearance/Farm0.webp" alt="Farm" className="w-full h-full object-contain" referrerPolicy="no-referrer" />
                         </div>
                         <div className="flex-1">
                           <h3 className="text-3xl font-black text-white uppercase mb-2">{t('farmName')}</h3>
