@@ -90,7 +90,7 @@ const PAINTBALLER_LEVELS = [
 ];
 
 const TRANSLATIONS: Record<Language, any> = {
-  en: {
+    en: {
     title: 'TDS Vs ZombieSSS',
     subtitle: 'Select Difficulty to Start Simulation',
     veryeasy: 'Very Easy',
@@ -104,6 +104,14 @@ const TRANSLATIONS: Record<Language, any> = {
     starting: 'Starting',
     attrBoss: 'Boss',
     attrBossDesc: 'Only appears once per game! Immune to most status effects and can move while stunned.',
+    attrBloated: 'Bloated',
+    attrBloatedDesc: 'Double HP, larger size, slightly slower.',
+    attrTank: 'Tanky',
+    attrTankDesc: 'Reduces all damage to 1 HP unless the attacker has Lead Detection.',
+    attrNimble: 'Nimble',
+    attrNimbleDesc: 'Zombies move 200% faster when this attribute is active.',
+    attrRegen: 'Regeneration',
+    attrRegenDesc: 'Zombies heal 2% of their HP every 2 seconds.',
     openAlmanac: '📖 Open Almanac',
     version: 'Simulation v2.5.0',
     money: 'Money',
@@ -188,6 +196,8 @@ const TRANSLATIONS: Record<Language, any> = {
     freezerDesc: 'Slows and freezes enemies with icy shots.',
     zombieHiddenName: 'Hidden',
     zombieHiddenDesc: 'Tricky invisible zombie. Above average speed.',
+    zombieBossName: 'Normal Boss',
+    zombieBossDesc: 'An absolute unit. Immune to most status effects and heavily armored.',
     zombieBreaker2Name: 'Breaker2',
     zombieBreaker2Desc: 'Spawns a Breaker on death.',
     zombieBreakerName: 'Breaker',
@@ -197,6 +207,7 @@ const TRANSLATIONS: Record<Language, any> = {
     jumpWave: 'Jump to Wave',
     spawnZombie: 'Spawn Zombie',
     lane: 'Lane',
+    range: 'Range',
   },
   it: {
     title: 'TDS Vs ZombieSSS',
@@ -263,10 +274,6 @@ const TRANSLATIONS: Record<Language, any> = {
     max: 'MAX',
     peak: 'Efficienza Massima',
     prod: 'PROD.',
-    zombieBreaker2Name: 'Breaker2',
-    zombieBreaker2Desc: 'Rilascia un Breaker alla morte.',
-    zombieBreakerName: 'Breaker',
-    zombieBreakerDesc: 'Molto veloce.',
     jumpWave: 'Salta a Ondata',
     spawnZombie: 'Genera Zombie',
     lane: 'Lane',
@@ -279,6 +286,7 @@ const TRANSLATIONS: Record<Language, any> = {
     upgradeEffect: 'Effetto Upgrade',
     damage: 'Danni',
     firerate: 'Cadenza',
+    range: 'Raggio',
     reward: 'Premio',
     health: 'Salute',
     splash: 'Splash',
@@ -2532,7 +2540,7 @@ export default function App() {
         abilityCooldowns: { ...cooldowns, [abilityName]: now + 15000 }
       } : u));
       
-      playSFX('/Sniper/Sound/Demoman/Sound/DemomanFire0.ogg');
+      playSFX('/PaintBALLER/Sound/PaintballerFire.ogg');
       
       // Spawn Grenade Projectile
       const targetX = targetZombies[0].x;
