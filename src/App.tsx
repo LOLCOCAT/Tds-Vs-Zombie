@@ -45,7 +45,7 @@ const ALL_UNIT_TYPES: { type: UnitType; nameKey: string; icon: string }[] = [
   { type: 'shotgunner', nameKey: 'shotgunnerName', icon: '/Units/Farm/Appearance/Shotgunner/Appearance/EasterShotgunner_Lvl0.webp' },
   { type: 'freezer', nameKey: 'freezerName', icon: '/Units/Freezer/Appearance/KRFreezer0.webp' },
   { type: 'assassin', nameKey: 'assassinName', icon: '/Units/Assassin/Aspect/AssassinLevel0.webp' },
-  { type: 'militant', nameKey: 'militantName', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel0.webp' },
+  { type: 'militant', nameKey: 'militantName', icon: '/Units/Militant/Appearance/EasterMilitant_Lvl0.webp' },
 ];
 
 const DEMOMAN_LEVELS = [
@@ -65,11 +65,11 @@ const SOLDIER_LEVELS = [
 ];
 
 const MILITANT_LEVELS = [
-  { level: 0, cost: 600, upgradeCost: 300, hp: 100, damage: 1, interval: 225, sellPrice: 200, name: 'Militant', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel0.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel0.webp', description: 'Single Damage: 1 | Interval: 0.225s', hasHiddenDetection: false, hasFlyingDetection: false },
-  { level: 1, cost: 0, upgradeCost: 850, hp: 100, damage: 1, interval: 175, sellPrice: 300, name: 'Radio Comms', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel1.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel1.webp', description: 'Interval: 0.175s | +Hidden/Flying', hasHiddenDetection: true, hasFlyingDetection: true },
-  { level: 2, cost: 0, upgradeCost: 2750, hp: 100, damage: 2, interval: 175, sellPrice: 583, name: 'Field Ops', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel2.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel2.webp', description: 'Damage: 2 (+1)', hasHiddenDetection: true, hasFlyingDetection: true },
-  { level: 3, cost: 0, upgradeCost: 8000, hp: 100, damage: 5, interval: 175, sellPrice: 1500, name: 'Guerrilla Tactics', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel3.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel3.webp', description: 'Damage: 5 (+3)', hasHiddenDetection: true, hasFlyingDetection: true },
-  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 12, interval: 175, sellPrice: 4166, name: 'Stealth Mercenary', appearance: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel4.webp', icon: '/Units/Sniper/Sound/Demoman/Upgrade_icon/Soldier/Sound/Normal_Boss/Militant/MilitantLevel4.webp', description: 'Damage: 12 (+7)', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 0, cost: 600, upgradeCost: 300, hp: 100, damage: 1, interval: 225, sellPrice: 200, name: 'Militant', appearance: '/Units/Militant/Appearance/EasterMilitant_Lvl0.webp', icon: '/Units/Militant/Appearance/EasterMilitant_Lvl0.webp', description: 'Single Damage: 1 | Interval: 0.225s', hasHiddenDetection: false, hasFlyingDetection: false },
+  { level: 1, cost: 0, upgradeCost: 850, hp: 100, damage: 1, interval: 175, sellPrice: 300, name: 'Radio Comms', appearance: '/Units/Militant/Appearance/EasterMilitant_Lvl1.webp', icon: '/Units/Militant/Upgrade/John_Upgrade_1_New.webp', description: 'Interval: 0.175s | +Hidden/Flying', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 2, cost: 0, upgradeCost: 2750, hp: 100, damage: 2, interval: 175, sellPrice: 583, name: 'Field Ops', appearance: '/Units/Militant/Appearance/EasterMilitant_Lvl2.webp', icon: '/Units/Militant/Upgrade/John_Upgrade_2_New.webp', description: 'Damage: 2 (+1)', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 3, cost: 0, upgradeCost: 8000, hp: 100, damage: 5, interval: 175, sellPrice: 1500, name: 'Guerrilla Tactics', appearance: '/Units/Militant/Appearance/EasterMilitant_Lvl3.webp', icon: '/Units/Militant/Upgrade/John_Upgrade_3_New.webp', description: 'Damage: 5 (+3)', hasHiddenDetection: true, hasFlyingDetection: true },
+  { level: 4, cost: 0, upgradeCost: 0, hp: 100, damage: 12, interval: 175, sellPrice: 4166, name: 'Stealth Mercenary', appearance: '/Units/Militant/Appearance/EasterMilitant_Lvl4.webp', icon: '/Units/Militant/Upgrade/John_Upgrade_4_New.webp', description: 'Damage: 12 (+7)', hasHiddenDetection: true, hasFlyingDetection: true },
 ];
 
 const SNIPER_LEVELS = [
