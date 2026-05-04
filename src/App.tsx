@@ -2908,12 +2908,17 @@ export default function App() {
 
             {/* Game Board */}
             <div className={`absolute top-[150px] left-1/2 -translate-x-1/2 w-[900px] h-[500px] border-4 border-[#334411] shadow-[inset_0_0_20px_rgba(0,0,0,0.3)] ${
-              difficulty === 'Very Easy' ? 'bg-[#FFD54F] border-[#816b1e]' : 
+              difficulty === 'Very Easy' ? 'border-[#816b1e]' : 
               difficulty === 'Easy' ? 'bg-[#5D4636] border-[#3B2D21]' :
               difficulty === 'Normal' ? 'bg-[#4a4a4a] border-[#333]' :
               difficulty === 'Infinite' ? 'bg-[#d2b48c] border-[#5D4037]' :
               'bg-grass-dark'
-            }`}>
+            }`}
+            style={difficulty === 'Very Easy' ? { 
+              backgroundImage: "url('/map/Very_Easy/Pvz_honey_valley_Very_Easy.png')",
+              backgroundSize: 'cover',
+              backgroundPosition: 'center'
+            } : {}}>
           {/* Far West Mode Decorations */}
           {difficulty === 'Infinite' && (
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
