@@ -3363,10 +3363,11 @@ export default function App() {
                             unit.unitType === 'shotgunner' ? SHOTGUNNER_LEVELS[unit.level].appearance :
                             unit.unitType === 'freezer' ? FREEZER_LEVELS[unit.level].appearance :
                             unit.unitType === 'assassin' ? ASSASSIN_LEVELS[unit.level].appearance :
+                            unit.unitType === 'militant' ? MILITANT_LEVELS[unit.level].appearance :
                             PAINTBALLER_LEVELS[unit.level].appearance
                           } 
                           alt={unit.unitType} 
-                          className={`w-full h-full object-contain p-1 ${['demoman', 'soldier', 'shotgunner', 'freezer', 'assassin'].includes(unit.unitType) ? '' : 'scale-x-[-1]'}`}
+                          className={`w-full h-full object-contain p-1 ${['demoman', 'soldier', 'shotgunner', 'freezer', 'assassin', 'militant'].includes(unit.unitType) ? '' : 'scale-x-[-1]'}`}
                           referrerPolicy="no-referrer"
                         />
                       </motion.div>
@@ -3475,7 +3476,7 @@ export default function App() {
                       ? `/Enemys/Breakers/Breaker2/Breaker2Fallen.webp`
                       : zombie.zombieType === 'BREAKER'
                       ? `/Enemys/Breakers/Breaker/BreakerFallen.webp`
-                      : `/Enemys/Normal/NormalAnim${zombie.variant % 2 + 1}.webp`} 
+                      : `/Enemys/Normal/NormalAnim${zombie.variant % 3 + 1}.webp`} 
                     alt="Zombie" 
                     className={`w-full h-full object-contain ${zombie.isStunned ? 'brightness-75' : ''}`}
                     style={{
